@@ -3,16 +3,19 @@
 Last updated: 2026-10-31 (Phase 0). Items marked *(expected)* come from public dataset documentation and the instruction pack; they will be confirmed or corrected against the real files in Phase 2.
 
 ## Source-data limitations
-- L-S01 *(expected)* Olist has no COGS, operating expenses, marketing spend, campaign attribution, inventory snapshots or experiment assignments. Profit, CAC, ROAS, lift and stock metrics cannot be observed.
-- L-S02 *(expected)* `customer_id` is generated per order; customer-level/repeat analysis must use `customer_unique_id`. To verify.
-- L-S03 *(expected)* Limited time coverage (~2016–2018) with sparse early and late months — constrains seasonal forecasting and period comparisons.
-- L-S04 *(expected)* Refund/return semantics are not explicitly provided; cancellation is only an order status.
+- L-S01 *(verified by headers and profiling)* Olist has no COGS, operating expenses, marketing spend, campaign attribution, inventory snapshots or experiment assignments. Profit, CAC, ROAS, lift and stock metrics cannot be observed.
+- L-S02 *(verified)* `customer_id` is one-per-order; customer-level and repeat analysis must use `customer_unique_id`.
+- L-S03 *(verified)* Purchases span 2016-09 to 2018-10, but 2016-11 is empty, 2016-09/12 are near-empty and 2018-09/10 have no delivered orders. Only 20 months (2017-01 to 2018-08) carry substantial volume, which limits seasonal forecasting (D-018).
+- L-S04 *(verified)* No refund or return fields exist; cancellation is only an order status.
+- L-S08 23 data-quality issues are logged in [DATA_QUALITY_ISSUES.md](data/DATA_QUALITY_ISSUES.md), the most material being non-unique `review_id` (DQ-01), geolocation duplicates (DQ-03) and coverage edges (DQ-15).
 - L-S05 Dataset was downloaded manually by the user to `data/raw/olist/` (9 CSVs present 2026-10-31). Not yet profiled (Phase 2).
 - L-S07 Header-level source facts (2026-10-31): misspelled columns `product_name_lenght`/`product_description_lenght`; UTF-8 BOM in the category translation file; mixed CRLF/LF line endings; no currency, timezone, quantity, cost, marketing, inventory or refund columns ([SOURCE_HEADERS](data/SOURCE_HEADERS.md)).
 - L-S06 Olist licence is CC BY-NC-SA 4.0 (verified by project owner 2026-10-31): attribution required, non-commercial use only, share-alike. Raw data is never committed. MIT applies only to MERIDIAN's own code/docs.
 
 ## Metric limitations
 - L-M01 25 observed/derived KPIs, 8 synthetic/scenario metrics and 10 unsupported metrics are defined in [08_kpi_dictionary.md](../business/08_kpi_dictionary.md). None is calculated yet. Value domains (status values etc.) are unverified until Phase 2.
+- L-M04 Default analysis window 2017-01 to 2018-08 (D-018): 20 months, limiting seasonal modelling. Out-of-window months are visible but flagged.
+- L-M05 K13 review score: 1,412 orders share review records with other orders (non-independent). K17 is low confidence (order-level carrier date; RULE-27 exclusions). K20 excludes 2 invalid records.
 - L-M03 Canonical revenue is a **proxy** (D-016): "Delivered Merchandise Value (Revenue Proxy)" = item price of delivered orders by purchase date. It is not audited accounting revenue or profit. Refunds, returns, chargebacks, voucher/discount and other accounting adjustments are unavailable. Freight is excluded (reported as K02). Recent periods are understated by right-censoring and must carry a warning.
 - L-M02 Payments vs order-item totals are expected to differ (instalments/vouchers/freight); differences will be shown, not hidden.
 
@@ -36,6 +39,10 @@ Last updated: 2026-10-31 (Phase 0). Items marked *(expected)* come from public d
 
 ## Deferred features
 - None deferred yet.
+
+## Phase 2 tooling notes
+- Profiling ran in a throwaway scratch environment (Python 3.13.2, pandas 3.1.0, numpy 2.5.4). These versions installed and ran correctly; this is early evidence for D-002/D-003 compatibility, not the locked project environment (Phase 3).
+- The profiler scripts are not yet committed (no application code in Phase 2). Proposed: commit them under `scripts/profiling/` in Phase 3 together with Pytest coverage.
 
 ## Known defects
 - None (no code exists).

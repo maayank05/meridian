@@ -116,8 +116,26 @@ Still open: D-011 (Phase 12).
 - **Conditions (user-mandated):** freight kept separate (K02); never described as audited accounting revenue or profit; documentation states that refunds and full accounting adjustments are unavailable; right-censoring warning on recent periods; one definition applied consistently in SQL, Python, API and Power BI. Payment reconciliation stays visible as K18.
 - **Trade-offs:** Conservative and drillable to category/seller, but understates the final months; excludes freight from "revenue".
 - **Revisit trigger:** Phase 2 profiling shows status semantics differ from the documentation (e.g. no `delivered` value, or a large share of shipped-but-undelivered orders).
+- **Phase 2 check (2026-10-31):** trigger not met. `delivered` exists (96,478 orders, 97.02% of orders); shipped-not-delivered = 1,107 orders.
 
 ## D-017 — Source timestamp handling (to be raised in Phase 3)
 - **Date / status:** 2026-10-31 / Open
 - **Context:** Source timestamps carry no timezone (H-07, A-02). `CLAUDE.md` prefers UTC storage, but converting requires an assumed zone, and Brazil spans several zones with DST in 2016–2018.
 - **Next step:** Present options with Phase 2 evidence before the Phase 3 schema is written.
+
+## D-018 — Default analysis window
+- **Date / status:** 2026-10-31 / **Accepted — option (b)** (project owner approval)
+- **Context:** Profiling (DQ-15): 2016-11 has 0 orders, 2016-09 has 4 and 2016-12 has 1; 2018-09/10 have 20 orders and 0 delivered (extract cutoff). Substantial monthly volume runs from 2017-01 to 2018-08 (20 months).
+- **Options:** (a) Full range 2016-09 to 2018-10 with flags. (b) **Default window 2017-01-01 to 2018-08-31** for trends, comparisons and model training, with the full range still selectable and edge months flagged. (c) Like (b) but ending 2018-07 for extra censoring margin.
+- **Decision:** (b). Default window **2017-01-01 to 2018-08-31** for trends, period comparisons and forecasting (training and evaluation). The complete source range stays accessible; periods outside the window are visibly flagged (RULE-25).
+- **Rationale:** removes empty and near-empty months that would otherwise show as false collapses, while keeping all data accessible. Raw and staging layers keep everything; only defaults and model windows change.
+- **Consequences:** customer history (first purchase, repeat status) is still computed from the full range, so 2016 buyers are not misclassified as new in 2017 (RULE-25).
+
+## D-019 — KPI refinements from profiling
+- **Date / status:** 2026-10-31 / **Accepted with conditions** (project owner approval)
+- **Approved conditions:** (a) K12 counts `canceled` only; `unavailable` is reported separately as K26 (CR-004). (b) K13 = mean review score per order, then averaged over orders; the 789 shared review_ids (linking 1,412 orders) are documented as a source of non-independence. (c) K17 retained with a low-confidence label; impossible dates excluded under documented rules (RULE-27). (d) K20 excludes zero-instalment credit-card records and reports the excluded count (2 in the profiled data).
+- **Original proposal (for the record):**
+- **(a) K12 cancellation scope:** count only `canceled` (625); report `unavailable` (609) as a separate "Unavailable rate". *Alternative:* combine both as "not fulfilled".
+- **(b) K13 review grain:** order-level. Each order's score = mean of its reviews (grain `(review_id, order_id)`), then average over orders. Shared review_ids (789) count once per order they belong to. *Alternative:* deduplicate by review_id (review-level), which loses the order link for 789 reviews.
+- **(c) K17 seller handover:** keep but label **low confidence**; exclude rows with carrier date before approval/purchase or shipping limit > 60 days after purchase, and count exclusions. *Alternative:* drop K17.
+- **(d) K20 instalments:** exclude the 2 credit-card records with 0 instalments as invalid, counted in the quality report.

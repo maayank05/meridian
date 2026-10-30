@@ -136,3 +136,4 @@ The body above is a point-in-time record. Outcome of the user's review:
 - **Accepted with documented limitations** as the Phase 1 *documentation milestone*. This is **not** validation of the future application or analytics.
 - **D-016 accepted: Option A**, with a naming clarification. K01 is renamed **"Delivered Merchandise Value (Revenue Proxy)"** (the mapping table above shows its pre-approval name). Conditions: freight separate; not audited revenue or profit; refunds and accounting adjustments documented as unavailable; right-censoring warning; one definition across SQL/Python/API/Power BI.
 - Phase 0 committed and pushed as `7270770`.
+- **Correction (2026-10-31, found in Phase 2):** the source has **52 columns**, not 57 as stated in "Header validation evidence" above. The per-file column lists and the P02 header-equality check were correct; only the hand-added total was wrong. The Phase 2 data-dictionary check (Q04) detected it.

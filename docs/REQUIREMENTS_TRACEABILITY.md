@@ -1,6 +1,6 @@
 # Requirements Traceability Matrix
 
-Last updated: 2026-10-31 (Phase 1)
+Last updated: 2026-10-31 (Phase 2)
 
 A requirement is **Complete** only when it maps to implementation, an executed test, and recorded evidence. Statuses: Not started · In progress · Complete · Partial (documented limitation) · Blocked · Deferred · Unsupported by source data.
 
@@ -16,11 +16,11 @@ A requirement is **Complete** only when it maps to implementation, an executed t
 | FR-004 | Documented date and dimension filters | Obj 3, 4 | Platform | — | — | — | Not started |
 | FR-005 | Show freshness, source, definition, provenance class | Obj 3, 6 | Platform | — | — | — | Not started |
 | FR-010 | Repeatable Python ingestion of local Olist files | Obj 1 | Data | — | — | — | Not started (needs dataset, Q-2) |
-| FR-011 | Validate files, columns, types, keys, relationships | Obj 1, 2 | Data / M09 | — | — | — | Not started |
+| FR-011 | Validate files, columns, types, candidate keys and relationships | Obj 1, 2 | Data / M09 | Check catalogue derived from [PROFILING_REPORT](data/PROFILING_REPORT.md), [RELATIONSHIP_VALIDATION](data/RELATIONSHIP_VALIDATION.md) | — | Phase 2: keys/FKs profiled on full data and cross-verified (33/33); ingestion validation not built | In progress |
 | FR-012 | Preserve raw data, record ingestion metadata | Obj 1 | Data | — | — | — | Not started |
 | FR-013 | Ordered SQL transformations to analytical tables | Obj 2 | Data | — | — | — | Not started |
 | FR-014 | Explicit, safe rebuild/reload | Obj 1 | Data | — | — | — | Not started |
-| FR-015 | Ingestion and data-quality reports | Obj 1, 3 | Data / M09 | — | — | — | Not started |
+| FR-015 | Ingestion and data-quality reports | Obj 1, 3 | Data / M09 | [DATA_QUALITY_ISSUES](data/DATA_QUALITY_ISSUES.md) (23 issues, one-off profiling) | — | Phase 2: issue register produced; automated per-run report not built | In progress |
 | FR-020 | Executive commercial KPIs | Obj 3 | M01 | — | — | — | Not started |
 | FR-021 | Customer purchase, cohort, segmentation | Obj 3 | M02 | — | — | — | Not started |
 | FR-022 | Product/category performance | Obj 3 | M04 | — | — | — | Not started |
@@ -32,7 +32,7 @@ A requirement is **Complete** only when it maps to implementation, an executed t
 | FR-028 | Reproducible executive report | Obj 3 | M10 | — | — | — | Not started |
 | FR-029 | Power BI model + DAX docs with reconciliation tests | Obj 5 | Power BI | — | — | — | Not started |
 | FR-030 | Synthetic marketing campaign scenario model with methodology and limitations (added via CR-001 / D-015) | Obj 6 | M03 | [14_M03_marketing_methodology.md](../business/14_M03_marketing_methodology.md) (methodology draft) | TST-US-027, TST-US-028 (planned) | Phase 1: methodology drafted; model not built | In progress |
-| FR-040 | BRD, FRD, stories, AC, process flows, KPI/data dictionaries, RAID, traceability | Obj 7 | M09 / BA | [business/](../business/) 01–14; data dictionary deferred to Phase 2 (CR-003) | TST-US-029 (planned) | Phase 1: 14 BA documents drafted; automated doc-consistency checks pass (see QUALITY_REPORT) | In progress |
+| FR-040 | BRD, FRD, stories, AC, process flows, KPI/data dictionaries, RAID, traceability | Obj 7 | M09 / BA | [business/](../business/) 01–14; [DATA_DICTIONARY](data/DATA_DICTIONARY.md) (Phase 2) | TST-US-029 (planned) | Phase 1 BA docs; Phase 2 data dictionary (52 columns) and KPI impact | In progress |
 | FR-041 | Architecture, lineage, decisions, limitations | Obj 7 | Docs | [PROJECT_SPEC.md](PROJECT_SPEC.md), [DECISIONS.md](DECISIONS.md), [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md) | — | Phase 0: drafts created; lineage pending Phase 3 | In progress |
 | FR-042 | Learning materials | Obj 8 | Learning | — | — | — | Not started |
 | FR-043 | Reproducible setup/test/pipeline/deploy instructions | Obj 8 | Docs | [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md) (skeleton) | — | — | In progress |
@@ -50,7 +50,7 @@ A requirement is **Complete** only when it maps to implementation, an executed t
 | NFR-007 | Observability: structured, non-sensitive logs | Obj 4 | Platform | — | — | — | Not started |
 | NFR-008 | Reproducibility: pinned deps, deterministic fixtures | Obj 1 | Platform | — | — | — | Not started |
 | NFR-009 | Portability: local setup + Render deploy docs | Obj 8 | Docs | — | — | — | Not started |
-| NFR-010 | Data integrity: constraints, RI, reconciliation | Obj 2 | Data | — | — | — | Not started |
+| NFR-010 | Data integrity: constraints, RI, reconciliation | Obj 2 | Data | [RELATIONSHIP_VALIDATION](data/RELATIONSHIP_VALIDATION.md) | — | Phase 2: source RI measured (0 transactional orphans); MySQL constraints not built | In progress |
 
 ## Module acceptance criteria (from `instructions/05`)
 

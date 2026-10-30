@@ -20,7 +20,7 @@ The alias is the short table name used in the KPI dictionary and business rules 
 | sellers | olist_sellers_dataset.csv | seller_id, seller_zip_code_prefix, seller_city, seller_state |
 | category_translation | product_category_name_translation.csv | product_category_name, product_category_name_english |
 
-Total: 9 files, 57 columns, no duplicate column names within any file.
+Total: 9 files, **52 columns**, no duplicate column names within any file. *(Corrected 2026-10-31 in Phase 2: the Phase 1 version said 57, a hand-addition error caught by the Phase 2 data-dictionary check. Per-file column lists above were always correct.)*
 
 ## Header-level observations
 
@@ -28,7 +28,7 @@ Total: 9 files, 57 columns, no duplicate column names within any file.
 |---|---|---|
 | H-01 | `product_name_lenght`, `product_description_lenght` are misspelled in the source | Keep source names in `raw_*`; rename to `*_length` in `stg_*`, documented in the data dictionary |
 | H-02 | `product_category_name_translation.csv` begins with a UTF-8 BOM | Ingestion must decode with BOM handling (`utf-8-sig`) |
-| H-03 | Line endings: CRLF in `order_reviews` and `category_translation`, LF in the other 7 | Parser must accept both; review comments may contain embedded newlines (verify in Phase 2) |
+| H-03 | Line endings: CRLF in `order_reviews` and `category_translation`, LF in the other 7 | Parser must accept both. **Verified Phase 2:** 3,852 review messages contain embedded line breaks (quote-aware parsing required) |
 | H-04 | No currency column in any file | BRL is a documented assumption (A-01), not an observed field |
 | H-05 | No cost, COGS, marketing spend, campaign, session, inventory, refund or return columns | Confirms unsupported KPIs U01–U09 at header level |
 | H-06 | Both `customer_id` and `customer_unique_id` exist | Supports RULE-02. Semantics (order-scoped vs person-level) to verify in Phase 2 |

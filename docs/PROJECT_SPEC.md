@@ -101,7 +101,7 @@ Adopts `instructions/12` layout with documented deviations (D-010):
 ### 4.1 Source
 Olist Brazilian E-Commerce Public Dataset — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
 
-**Expected** (from public documentation; **unverified until Phase 2**): 9 CSV files — customers, orders, order_items, order_payments, order_reviews, products, sellers, geolocation, product_category_name_translation; roughly 100k orders, 2016–2018, BRL currency. No schema, row count or date range will be relied on until profiled from the actual files. Licence CC BY-NC-SA 4.0, verified by the project owner (D-013).
+**Observed (Phase 2 profiling, 2026-10-31):** 9 CSV files; 99,441 orders, 112,650 order items, 103,886 payment records, 99,224 reviews, 32,951 products, 3,095 sellers, 1,000,163 geolocation rows. Purchases 2016-09-04 to 2018-10-17; substantial monthly volume 2017-01 to 2018-08. Details: [PROFILING_REPORT](data/PROFILING_REPORT.md). Licence CC BY-NC-SA 4.0, verified by the project owner (D-013).
 
 ### 4.2 Acquisition
 Manual download by the user (no Kaggle credentials on this machine) into `data/raw/olist/` (gitignored). Ingestion reads a configurable path; Kaggle credentials are never required when files exist locally.
@@ -150,4 +150,6 @@ CI and unit tests use small, deterministic, hand-built fixtures that mimic the o
 | Q-4 | Create a GitHub repository (name `meridian`?) and confirm whether it should be public. `gh` CLI is not installed. | **Resolved 2026-10-31:** public, https://github.com/maayank05/meridian |
 | Q-5 | Local MySQL: you will need to create `meridian_dev` / `meridian_test` databases and a non-root app user, and put credentials in a local `.env` (never in chat). Instructions will be provided in Phase 3. | Phase 3 |
 | Q-7 | Approve the canonical revenue definition (D-016) | **Resolved 2026-10-31:** Option A, "Delivered Merchandise Value (Revenue Proxy)" |
+| Q-8 | Approve the default analysis window (D-018) | **Resolved 2026-10-31:** 2017-01-01 to 2018-08-31 |
+| Q-9 | Approve KPI refinements K12/K13/K17/K20 (D-019) | **Resolved 2026-10-31:** approved with conditions; K26 added |
 | Q-6 | Production budget for hosted MySQL + Render (free tiers may lack persistence/backups). | Phase 12 |

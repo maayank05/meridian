@@ -2,7 +2,7 @@
 
 Status: Draft v0.1 (Phase 1) · Last updated: 2026-10-31
 
-- **Source field names are header-verified** against [SOURCE_HEADERS](../docs/data/SOURCE_HEADERS.md) (automated check). **Value domains** (e.g. the exact `order_status` values such as `delivered`, `canceled`, `unavailable`), nulls, types and grain uniqueness are **unverified until Phase 2**.
+- **Source field names are header-verified** against [SOURCE_HEADERS](../docs/data/SOURCE_HEADERS.md) (automated check). **Value domains, nulls, types and grain uniqueness were profiled in Phase 2**; per-KPI results are in [KPI_IMPACT.md](../docs/data/KPI_IMPACT.md).
 - No KPI here has been calculated. **No values appear in this document.**
 - Implementation references are *planned* locations; test names are *planned* reconciliation tests.
 - Provenance classes follow RULE-16.
@@ -53,7 +53,7 @@ Mitigations: the right-censoring flag (RULE-23) is shown on the latest months. A
 | Numerator / denominator | Sum; no denominator |
 | Grain | Order item, aggregated to the requested period/segment |
 | Source fields | `order_items.price`, `order_items.order_id`, `orders.order_id`, `orders.order_status`, `orders.order_purchase_timestamp` |
-| Filters / exclusions | `order_status` = delivered (value to verify in Phase 2); global filters (date, category, customer state, seller state) |
+| Filters / exclusions | `order_status` = delivered (verified in Phase 2: 96,478 orders); global filters (date, category, customer state, seller state); default window 2017-01-01 to 2018-08-31 (D-018, RULE-25); full range selectable with flags |
 | Time basis | `order_purchase_timestamp` (RULE-10) |
 | Currency / unit | BRL (A-01), DECIMAL, display 2 dp |
 | Null handling | Items with null price are excluded **and counted** in the quality report; never treated as 0 |
@@ -135,7 +135,7 @@ Mitigations: the right-censoring flag (RULE-23) is shown on the latest months. A
 | Null handling | Undefined when K03 = 0 |
 | Owner | SH-04 |
 | Refresh cadence | Per ingestion run |
-| Limitations | Assumes one row = one unit (no quantity column exists — to verify in Phase 2) |
+| Limitations | One row = one unit: no quantity column exists, and Phase 2 data is consistent with this (A-09 validated) |
 | Implementation refs | SQL Phase 4 · Python Phase 5 (planned) |
 | Reconciliation test | Planned: fixture with multi-item orders |
 
@@ -257,12 +257,12 @@ Mitigations: the right-censoring flag (RULE-23) is shown on the latest months. A
 | Field | Value |
 |---|---|
 | Provenance | derived |
-| Business definition | Share of placed orders with cancelled status |
-| Formula | orders with status = canceled ÷ K06 |
+| Business definition | Share of placed orders with status `canceled` (only; RULE-26) |
+| Formula | orders with `order_status` = canceled ÷ K06 |
 | Numerator / denominator | Cancelled orders / orders placed |
 | Grain | Period/segment |
 | Source fields | `orders.order_id`, `orders.order_status`, `orders.order_purchase_timestamp` |
-| Filters / exclusions | Status value spelling to verify in Phase 2; whether `unavailable` counts is decided after profiling |
+| Filters / exclusions | `canceled` only (D-019a). `unavailable` is excluded from the numerator and reported separately as K26 |
 | Time basis | `order_purchase_timestamp` |
 | Currency / unit | % |
 | Null handling | Undefined when K06 = 0 |
@@ -276,18 +276,18 @@ Mitigations: the right-censoring flag (RULE-23) is shown on the latest months. A
 | Field | Value |
 |---|---|
 | Provenance | derived |
-| Business definition | Mean customer review score |
-| Formula | AVG(review_score) |
-| Numerator / denominator | Σ scores / number of reviews |
-| Grain | Review; order-level per RULE-15 when joined to orders |
+| Business definition | Mean customer review score per order, averaged over orders (D-019b) |
+| Formula | AVG over orders of (AVG(review_score) per order) |
+| Numerator / denominator | Σ order-level mean scores / orders with ≥1 review |
+| Grain | Source `(review_id, order_id)` → order level (RULE-15) |
 | Source fields | `order_reviews.review_id`, `order_reviews.order_id`, `order_reviews.review_score`, `order_reviews.review_creation_date` |
 | Filters / exclusions | Global filters via order |
 | Time basis | `orders.order_purchase_timestamp` (via order) for consistency; review date available |
-| Currency / unit | Score 1–5 (range to verify in Phase 2) |
+| Currency / unit | Score 1–5 (verified; no missing scores) |
 | Null handling | Missing scores excluded and counted |
 | Owner | SH-04 |
 | Refresh cadence | Per ingestion run |
-| Limitations | Not every order may have a review (response bias); associations only (RULE-19) |
+| Limitations | Not every order has a review (response bias); associations only (RULE-19). **Non-independence:** 789 review_ids are shared by 2–3 orders (1,412 orders) with identical content, so those orders do not contribute independent observations. 5,127 reviews predate delivery |
 | Implementation refs | SQL Phase 4 (planned) |
 | Reconciliation test | Planned: multi-review order fixture |
 
@@ -363,7 +363,7 @@ Mitigations: the right-censoring flag (RULE-23) is shown on the latest months. A
 | Null handling | Missing carrier date → excluded, counted |
 | Owner | SH-05 |
 | Refresh cadence | Per ingestion run |
-| Limitations | Carrier date is order-level; in multi-seller orders it may not reflect each seller's handover — to assess in Phase 2 |
+| Limitations | **LOW CONFIDENCE — shown with a low-confidence label (D-019c).** Exclusions per RULE-27, counted by reason. Carrier date is order-level (1,278 multi-seller orders); carrier-before-approval violations (1,359) and far-future shipping limits exist (DQ-12, DQ-13) |
 | Implementation refs | SQL Phase 4 (planned) |
 | Reconciliation test | Planned: multi-seller fixture |
 
@@ -401,7 +401,7 @@ Mitigations: the right-censoring flag (RULE-23) is shown on the latest months. A
 | Null handling | Unknown/undefined types shown as their own category |
 | Owner | SH-02 |
 | Refresh cadence | Per ingestion run |
-| Limitations | Type values unverified until Phase 2 |
+| Limitations | Five types verified: credit_card, boleto, voucher, debit_card, not_defined (DQ-17) |
 | Implementation refs | SQL Phase 4 (planned) |
 | Reconciliation test | Planned: shares sum to 100% |
 
@@ -414,7 +414,7 @@ Mitigations: the right-censoring flag (RULE-23) is shown on the latest months. A
 | Numerator / denominator | Σ instalments / payment records |
 | Grain | Payment record |
 | Source fields | `order_payments.payment_installments`, `order_payments.payment_type` |
-| Filters / exclusions | Value-domain checks in Phase 2 (e.g. zero instalments) |
+| Filters / exclusions | Excludes `credit_card` records with 0 instalments (RULE-28); excluded count reported with the KPI (2 in profiled data) |
 | Time basis | `order_purchase_timestamp` (via order) |
 | Currency / unit | Count |
 | Null handling | Invalid values excluded and counted |
@@ -509,7 +509,7 @@ Mitigations: the right-censoring flag (RULE-23) is shown on the latest months. A
 | Numerator / denominator | Not a ratio |
 | Grain | Month |
 | Source fields | `order_items.price`, `orders.order_status`, `orders.order_purchase_timestamp` (via K01 monthly series) |
-| Filters / exclusions | Censored final months excluded from training (RULE-23) |
+| Filters / exclusions | Training and evaluation restricted to the D-018 window 2017-01 to 2018-08 (RULE-25); censored months never used |
 | Time basis | Month of `order_purchase_timestamp` |
 | Currency / unit | BRL |
 | Null handling | Not produced if history is insufficient |
@@ -518,6 +518,25 @@ Mitigations: the right-censoring flag (RULE-23) is shown on the latest months. A
 | Limitations | Short history (~2 years expected) limits seasonality; may be reported as "not justified" |
 | Implementation refs | Python Phase 6 (planned) |
 | Reconciliation test | Planned: chronological-split leakage test; baseline comparison |
+
+### K26 — Unavailable Order Rate
+| Field | Value |
+|---|---|
+| Provenance | derived |
+| Business definition | Share of placed orders with status `unavailable`, reported alongside but separately from cancellation (RULE-26) |
+| Formula | orders with `order_status` = unavailable ÷ K06 |
+| Numerator / denominator | Unavailable orders / orders placed |
+| Grain | Period/segment |
+| Source fields | `orders.order_id`, `orders.order_status`, `orders.order_purchase_timestamp` |
+| Filters / exclusions | `unavailable` only; default window per RULE-25 |
+| Time basis | `order_purchase_timestamp` |
+| Currency / unit | % |
+| Null handling | Undefined when K06 = 0 |
+| Owner | SH-05 |
+| Refresh cadence | Per ingestion run |
+| Limitations | Reason for unavailability is not in the source; 603 of these orders have no items, so category/seller filters cannot apply to them |
+| Implementation refs | SQL Phase 4 (planned) |
+| Reconciliation test | Planned: mixed-status fixture; K12 + K26 numerators never double-count |
 
 ---
 
