@@ -107,3 +107,17 @@ Still open: D-011 (Phase 12).
 - **Options:** (a) Synthetic campaign scenario model in `scenario_*` tables, labelled synthetic, with methodology for attributed vs incremental outcomes; (b) M03 reduced to a methodology page stating what is unsupported and what data would be required.
 - **Decision:** Both. Build (a) with a documented generator seed, distributions and rationale, kept in `scenario_*` tables and labelled `synthetic_assumption`/`scenario_output` everywhere it appears. Also deliver (b) as methodology and limitations documentation explaining that CAC, ROAS and lift are not observable in Olist and what real data would be required.
 - **Consequences:** No M03 output may be presented as Northstar's or Olist's actual marketing performance.
+
+## D-016 — Canonical revenue definition
+- **Date / status:** 2026-10-31 / **Accepted — Option A** (project owner approval, with naming clarification)
+- **Context:** Olist is a marketplace; its commission income is not in the data. Northstar revenue is simulated as the merchandise value of orders (A-04). Value basis, status scope and time basis must be fixed once and reused everywhere (SQL, Python, API, Power BI, report).
+- **Options:** A: Σ item price, delivered orders, purchase-date basis. B: Σ item price, all except canceled/unavailable. C: Σ price + freight, delivered. D: Σ payment value. E: as A but delivery-date basis. Full consequences are in [08_kpi_dictionary.md Part A](../business/08_kpi_dictionary.md).
+- **Decision:** Option A — Σ `order_items.price` for orders with status delivered, grouped by `order_purchase_timestamp`, BRL. Displayed canonical metric name: **"Delivered Merchandise Value (Revenue Proxy)"**.
+- **Conditions (user-mandated):** freight kept separate (K02); never described as audited accounting revenue or profit; documentation states that refunds and full accounting adjustments are unavailable; right-censoring warning on recent periods; one definition applied consistently in SQL, Python, API and Power BI. Payment reconciliation stays visible as K18.
+- **Trade-offs:** Conservative and drillable to category/seller, but understates the final months; excludes freight from "revenue".
+- **Revisit trigger:** Phase 2 profiling shows status semantics differ from the documentation (e.g. no `delivered` value, or a large share of shipped-but-undelivered orders).
+
+## D-017 — Source timestamp handling (to be raised in Phase 3)
+- **Date / status:** 2026-10-31 / Open
+- **Context:** Source timestamps carry no timezone (H-07, A-02). `CLAUDE.md` prefers UTC storage, but converting requires an assumed zone, and Brazil spans several zones with DST in 2016–2018.
+- **Next step:** Present options with Phase 2 evidence before the Phase 3 schema is written.

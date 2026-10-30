@@ -119,9 +119,9 @@ CI and unit tests use small, deterministic, hand-built fixtures that mimic the o
 
 | ID | Module | Scope constraint known at Phase 0 | Status |
 |---|---|---|---|
-| M01 | Executive Intelligence Centre | Revenue definition must be fixed in Phase 1 KPI dictionary | Not started |
+| M01 | Executive Intelligence Centre | Canonical revenue proxy fixed by D-016 ("Delivered Merchandise Value (Revenue Proxy)") | Not started |
 | M02 | Customer Intelligence | Olist `customer_id` is per-order; repeat analysis must use `customer_unique_id` (to verify Phase 2) | Not started |
-| M03 | Marketing Performance & Incrementality | **No marketing spend/attribution in Olist.** CAC/ROAS/lift cannot be observed. Synthetic scenario model only if user approves (open question Q-3) | Not started |
+| M03 | Marketing Performance & Incrementality | **No marketing spend/attribution in Olist.** CAC/ROAS/lift cannot be observed. Synthetic scenario model + methodology approved (D-015, FR-030) | Not started |
 | M04 | Product & Pricing Intelligence | Elasticity only if identification assumptions hold; otherwise descriptive + labelled sensitivity scenarios | Not started |
 | M05 | Operations & Seller Intelligence | Eligible population and denominators per metric | Not started |
 | M06 | Financial Intelligence / FP&A | No COGS/opex in Olist → no profit claims; synthetic budget only if labelled | Not started |
@@ -144,9 +144,10 @@ CI and unit tests use small, deterministic, hand-built fixtures that mimic the o
 
 | ID | Question | Needed by |
 |---|---|---|
-| Q-1 | Approve the supporting-library list in §2.1? | Phase 3 (Python), Phase 9 (frontend) |
-| Q-2 | Please download the Olist dataset from Kaggle and place the CSVs in `data/raw/olist/`. | Phase 2 |
-| Q-3 | M03 Marketing: build a clearly-labelled synthetic campaign scenario model, or limit M03 to an explicit "not supported by source data" statement plus methodology? | Phase 1 |
-| Q-4 | Create a GitHub repository (name `meridian`?) and confirm whether it should be public. `gh` CLI is not installed. | Before first push |
+| Q-1 | Approve the supporting-library list in §2.1? | **Resolved 2026-10-31:** approved, subject to compatibility verification |
+| Q-2 | Please download the Olist dataset from Kaggle and place the CSVs in `data/raw/olist/`. | **Resolved 2026-10-31:** 9 CSVs present; headers verified |
+| Q-3 | M03 Marketing: build a clearly-labelled synthetic campaign scenario model, or limit M03 to an explicit "not supported by source data" statement plus methodology? | **Resolved 2026-10-31:** both (D-015) |
+| Q-4 | Create a GitHub repository (name `meridian`?) and confirm whether it should be public. `gh` CLI is not installed. | **Resolved 2026-10-31:** public, https://github.com/maayank05/meridian |
 | Q-5 | Local MySQL: you will need to create `meridian_dev` / `meridian_test` databases and a non-root app user, and put credentials in a local `.env` (never in chat). Instructions will be provided in Phase 3. | Phase 3 |
+| Q-7 | Approve the canonical revenue definition (D-016) | **Resolved 2026-10-31:** Option A, "Delivered Merchandise Value (Revenue Proxy)" |
 | Q-6 | Production budget for hosted MySQL + Render (free tiers may lack persistence/backups). | Phase 12 |

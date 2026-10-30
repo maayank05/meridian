@@ -1,10 +1,10 @@
 # Requirements Traceability Matrix
 
-Last updated: 2026-10-31 (Phase 0)
+Last updated: 2026-10-31 (Phase 1)
 
 A requirement is **Complete** only when it maps to implementation, an executed test, and recorded evidence. Statuses: Not started · In progress · Complete · Partial (documented limitation) · Blocked · Deferred · Unsupported by source data.
 
-"—" means not yet assigned. Test IDs are allocated when tests are written; none are invented in advance.
+"—" means not yet assigned. Test IDs ending in **(planned)** are reservations from the user stories. They are **not evidence**: a test counts only after it appears in QUALITY_REPORT with an executed result.
 
 ## Functional requirements
 
@@ -31,7 +31,8 @@ A requirement is **Complete** only when it maps to implementation, an executed t
 | FR-027 | Statistics and forecasts only when justified | Obj 3 | M08 | — | — | — | Not started |
 | FR-028 | Reproducible executive report | Obj 3 | M10 | — | — | — | Not started |
 | FR-029 | Power BI model + DAX docs with reconciliation tests | Obj 5 | Power BI | — | — | — | Not started |
-| FR-040 | BRD, FRD, stories, AC, process flows, KPI/data dictionaries, RAID, traceability | Obj 7 | M09 / BA | This file (skeleton) | — | Phase 0: matrix created | In progress |
+| FR-030 | Synthetic marketing campaign scenario model with methodology and limitations (added via CR-001 / D-015) | Obj 6 | M03 | [14_M03_marketing_methodology.md](../business/14_M03_marketing_methodology.md) (methodology draft) | TST-US-027, TST-US-028 (planned) | Phase 1: methodology drafted; model not built | In progress |
+| FR-040 | BRD, FRD, stories, AC, process flows, KPI/data dictionaries, RAID, traceability | Obj 7 | M09 / BA | [business/](../business/) 01–14; data dictionary deferred to Phase 2 (CR-003) | TST-US-029 (planned) | Phase 1: 14 BA documents drafted; automated doc-consistency checks pass (see QUALITY_REPORT) | In progress |
 | FR-041 | Architecture, lineage, decisions, limitations | Obj 7 | Docs | [PROJECT_SPEC.md](PROJECT_SPEC.md), [DECISIONS.md](DECISIONS.md), [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md) | — | Phase 0: drafts created; lineage pending Phase 3 | In progress |
 | FR-042 | Learning materials | Obj 8 | Learning | — | — | — | Not started |
 | FR-043 | Reproducible setup/test/pipeline/deploy instructions | Obj 8 | Docs | [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md) (skeleton) | — | — | In progress |
@@ -65,3 +66,38 @@ A requirement is **Complete** only when it maps to implementation, an executed t
 | AC-M08 | No leakage; held-out evaluation; model report; uncertainty shown | M08 | — | — | — | Not started |
 | AC-M09 | Every major requirement maps to implementation, tests, evidence | M09 | This file | — | — | In progress |
 | AC-M10 | Report from real outputs, timestamped, reconciled with app, includes limitations | M10 | — | — | — | Not started |
+
+## Business requirement → functional requirement → user story
+
+Generated from [04_FRD.md](../business/04_FRD.md) and [06_user_stories.md](../business/06_user_stories.md); verified by the Phase 1 consistency check.
+
+| BR | FR | User stories (priority) | Planned test IDs |
+|---|---|---|---|
+| BR-01 | FR-001 | US-001 (Must) | TST-US-001 |
+| BR-01 | FR-002 | US-002 (Must) | TST-US-002 |
+| BR-01 | FR-003 | US-003 (Must) | TST-US-003 |
+| BR-01 | FR-004 | US-004 (Must) | TST-US-004 |
+| BR-01 | FR-005 | US-005 (Must) | TST-US-005 |
+| BR-08 | FR-010 | US-006 (Must) | TST-US-006 |
+| BR-08 | FR-011 | US-007 (Must) | TST-US-007 |
+| BR-08 | FR-012 | US-008 (Must) | TST-US-008 |
+| BR-08 | FR-013 | US-009 (Must) | TST-US-009 |
+| BR-08 | FR-014 | US-010 (Must) | TST-US-010 |
+| BR-08 | FR-015 | US-011 (Must) | TST-US-011 |
+| BR-01 | FR-020 | US-012 (Must), US-013 (Should) | TST-US-012, TST-US-013 |
+| BR-02 | FR-021 | US-014 (Must), US-015 (Should) | TST-US-014, TST-US-015 |
+| BR-03 | FR-022 | US-016 (Must) | TST-US-016 |
+| BR-04 | FR-023 | US-017 (Must), US-018 (Should) | TST-US-017, TST-US-018 |
+| BR-05 | FR-024 | US-019 (Must), US-020 (Must) | TST-US-019, TST-US-020 |
+| BR-08 | FR-025 | US-021 (Should) | TST-US-021 |
+| BR-06 | FR-026 | US-022 (Must) | TST-US-022 |
+| BR-07 | FR-027 | US-023 (Should), US-024 (Could) | TST-US-023, TST-US-024 |
+| BR-09 | FR-028 | US-025 (Must) | TST-US-025 |
+| BR-10 | FR-029 | US-026 (Should) | TST-US-026 |
+| BR-11 | FR-030 | US-027 (Should), US-028 (Must) | TST-US-027, TST-US-028 |
+| BR-12 | FR-040 | US-029 (Must) | TST-US-029 |
+| BR-12 | FR-041 | US-030 (Must) | TST-US-030 |
+| BR-12 | FR-042 | US-031 (Must) | TST-US-031 |
+| BR-12 | FR-043 | US-032 (Must) | TST-US-032 |
+
+NFRs are verified through measurable criteria in [05_NFR.md](../business/05_NFR.md), not user stories.

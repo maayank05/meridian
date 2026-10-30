@@ -1,43 +1,40 @@
 # Project Status
 Last updated: 2026-10-31
-Current phase: Phase 0 approved 2026-10-31. Committing to GitHub awaits approval of the staging list; Phase 1 plan awaits approval
+Current phase: Phase 1 closed (accepted with documented limitations, as a documentation milestone). Phase 2 not started — awaiting approval
 Overall status: IN PROGRESS
 
 ## Completed
-- [x] Read all 19 instruction-pack files (README_FIRST, MASTER_BUILD_PROMPT, CLAUDE, PACK_MANIFEST, instructions/01–15)
-- [x] Repository inspection (pack only; no code; was not a Git repo)
-- [x] Environment audit with executed commands
-- [x] Local Git repository initialised (`main`, no commits, no remote)
-- [x] `.gitignore` protecting secrets and raw data
-- [x] Phase 0 control documents created
-- [x] Phase 0 consistency checks: 20 passed / 0 failed
-- [x] Phase 0 reviewed and approved by user (2026-10-31): D-002–D-010 accepted (subject to dependency compatibility verification); D-015 = option A + B
-- [x] D-012, D-013, D-014 approved; Olist dataset (9 CSVs) placed in `data/raw/olist/` by user
-- [x] Repo-local git identity set to GitHub noreply email
-- [x] GitHub remote `origin` → https://github.com/maayank05/meridian (public) configured and fetched
+- [x] Phase 0 — audit and control documents; committed and pushed as `7270770` to https://github.com/maayank05/meridian
+- [x] Decisions D-002–D-010 and D-012–D-016 accepted (D-002–D-010 subject to dependency compatibility verification)
+- [x] D-016: canonical metric **"Delivered Merchandise Value (Revenue Proxy)"** (Option A) applied to the KPI dictionary, rules, stories, decisions and limitations
+- [x] Phase 1 — 14 business documents, header evidence, traceability (accepted as a documentation milestone only; not validation of the future application or analytics)
+- [x] Phase 1 closure checks: 51 passed / 0 failed / 0 skipped (checker mutation-tested)
 
 ## In progress
-- First commit + push of Phase 0 documentation, awaiting the user's approval of the staging list
-- Phase 1 execution plan, awaiting approval
+- Phase 1 commit: files staged for user review; **not committed**
 
 ## Blocked / waiting on user
+- Approval of the Phase 1 staged file list (then commit + push)
+- Approval to start Phase 2 (profiling)
 - Q-5 local MySQL databases/user + `.env` (blocks Phase 3)
 - Q-6 production hosting budget (Phase 12)
 
 ## Module status
 | Module | Status |
 |---|---|
-| M01–M10 | Not started |
+| M01–M10 | Not started (requirements, stories and KPIs specified; nothing implemented or calculated) |
 
 ## Latest verified checks
 | Check | Command | Result | Evidence/date |
 |---|---|---|---|
-| Docs consistency | `py -3.13 -I phase0_check.py <repo>` (scratchpad script) | 20 passed, 0 failed, 0 skipped | 2026-10-31, [checkpoint](checkpoints/PHASE_00_CHECKPOINT.md) |
+| Docs consistency + Phase 1 closure | `py -3.13 -I phase1_check.py <repo_root>` (scratchpad) | 51 passed, 0 failed, 0 skipped | 2026-10-31, [QUALITY_REPORT](QUALITY_REPORT.md) |
+| Phase 0 push | `git push origin main` | `286588c..7270770` | 2026-10-31 |
 | Ruff / Pytest / frontend | — | Not applicable (no code yet) | — |
 
 ## Next actions
-1. User approves the staging list → commit Phase 0 and push to `origin/main` (fast-forward on top of the remote LICENSE commit, no force).
-2. User approves the Phase 1 plan → begin Phase 1 — Business analysis and specification.
+1. User approves Phase 1 staged list → commit + push.
+2. User approves Phase 2 → dataset profiling, data dictionary, fixtures; validate A-02–A-13 and the `delivered` status value D-016 depends on.
+3. Before Phase 3: user creates local MySQL databases/user and `.env` (Q-5); D-017 timestamp decision.
 
 ## Latest checkpoint
-Phase 0 — Status: PASS WITH DOCUMENTED LIMITATIONS
+Phase 1 — Status: PASS WITH DOCUMENTED LIMITATIONS (documentation milestone) ([checkpoint](checkpoints/PHASE_01_CHECKPOINT.md))

@@ -8,10 +8,12 @@ Last updated: 2026-10-31 (Phase 0). Items marked *(expected)* come from public d
 - L-S03 *(expected)* Limited time coverage (~2016–2018) with sparse early and late months — constrains seasonal forecasting and period comparisons.
 - L-S04 *(expected)* Refund/return semantics are not explicitly provided; cancellation is only an order status.
 - L-S05 Dataset was downloaded manually by the user to `data/raw/olist/` (9 CSVs present 2026-10-31). Not yet profiled (Phase 2).
+- L-S07 Header-level source facts (2026-10-31): misspelled columns `product_name_lenght`/`product_description_lenght`; UTF-8 BOM in the category translation file; mixed CRLF/LF line endings; no currency, timezone, quantity, cost, marketing, inventory or refund columns ([SOURCE_HEADERS](data/SOURCE_HEADERS.md)).
 - L-S06 Olist licence is CC BY-NC-SA 4.0 (verified by project owner 2026-10-31): attribution required, non-commercial use only, share-alike. Raw data is never committed. MIT applies only to MERIDIAN's own code/docs.
 
 ## Metric limitations
-- L-M01 No KPI is defined yet. Canonical revenue definition (statuses and fields included) is a Phase 1 deliverable.
+- L-M01 25 observed/derived KPIs, 8 synthetic/scenario metrics and 10 unsupported metrics are defined in [08_kpi_dictionary.md](../business/08_kpi_dictionary.md). None is calculated yet. Value domains (status values etc.) are unverified until Phase 2.
+- L-M03 Canonical revenue is a **proxy** (D-016): "Delivered Merchandise Value (Revenue Proxy)" = item price of delivered orders by purchase date. It is not audited accounting revenue or profit. Refunds, returns, chargebacks, voucher/discount and other accounting adjustments are unavailable. Freight is excluded (reported as K02). Recent periods are understated by right-censoring and must carry a warning.
 - L-M02 Payments vs order-item totals are expected to differ (instalments/vouchers/freight); differences will be shown, not hidden.
 
 ## Statistical / model limitations
