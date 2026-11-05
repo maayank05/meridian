@@ -1,6 +1,6 @@
 # Requirements Traceability Matrix
 
-Last updated: 2026-11-06 (Milestone C / Phases 8, 9, 11)
+Last updated: 2026-11-06 (Milestone D / Phases 12-13, final)
 
 A requirement is **Complete** only when it maps to implementation, an executed test, and recorded evidence. Statuses: Not started · In progress · Complete · Partial (documented limitation) · Blocked · Deferred · Unsupported by source data.
 
@@ -30,26 +30,26 @@ A requirement is **Complete** only when it maps to implementation, an executed t
 | FR-026 | Scenario comparison with documented assumptions | Obj 6 | M07 | `analytics/simulator.py` | test_simulator.py (15 cases, hand-calculated incl. US-022) | Zero-cost ROI undefined; invalid inputs rejected | Complete (API + UI + tests, Milestone C) |
 | FR-027 | Statistics and forecasts only when justified | Obj 3 | M08 | `analytics/forecast.py`, `scripts/forecast_report.py` | test_forecast.py | [FORECAST_REPORT](analytics/FORECAST_REPORT.md): model not justified, naive used | Complete (API + UI + tests, Milestone C) |
 | FR-028 | Reproducible executive report | Obj 3 | M10 | `meridian/reporting/executive.py`, `/api/v1/reports/executive`, `scripts/executive_report.py` | test_executive_report_matches_api | Report payloads equal API JSON; timestamped; limitations; HTML only (no PDF) | Complete |
-| FR-029 | Power BI model + DAX docs with reconciliation tests | Obj 5 | Power BI | — | — | — | Not started |
+| FR-029 | Power BI model + DAX docs with reconciliation tests | Obj 5 | Power BI | [powerbi/](../powerbi/) (model spec, DAX, build steps), `scripts/powerbi_targets.py` | Targets generated from API payload | No PBIX built (requires Power BI Desktop; D-012) | Partial |
 | FR-030 | Synthetic marketing campaign scenario model with methodology and limitations (added via CR-001 / D-015) | Obj 6 | M03 | `simulator.CampaignScenario`; [14_M03_marketing_methodology.md](../business/14_M03_marketing_methodology.md) | test_campaign_scenario_attributed_vs_incremental | Attributed vs incremental ROAS demonstrated (CR-005) | Complete (API + UI + tests, Milestone C) |
 | FR-040 | BRD, FRD, stories, AC, process flows, KPI/data dictionaries, RAID, traceability | Obj 7 | M09 / BA | [business/](../business/) 01–14; [DATA_DICTIONARY](data/DATA_DICTIONARY.md) (Phase 2) | TST-US-029 (planned) | Phase 1 BA docs; Phase 2 data dictionary (52 columns) and KPI impact | In progress |
 | FR-041 | Architecture, lineage, decisions, limitations | Obj 7 | Docs | [PROJECT_SPEC.md](PROJECT_SPEC.md), [DECISIONS.md](DECISIONS.md), [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md) | — | Phase 0: drafts created; lineage pending Phase 3 | In progress |
-| FR-042 | Learning materials | Obj 8 | Learning | — | — | — | Not started |
-| FR-043 | Reproducible setup/test/pipeline/deploy instructions | Obj 8 | Docs | [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md) (skeleton) | — | — | In progress |
+| FR-042 | Learning materials | Obj 8 | Learning | [LEARNING_GUIDE.md](LEARNING_GUIDE.md) (short guide, per owner instruction) | — | Pipeline, reconciliation, API→UI, forecast, simulator, reproduction | Complete (lean scope) |
+| FR-043 | Reproducible setup/test/pipeline/deploy instructions | Obj 8 | Docs | [README.md](../README.md), [setup guide](setup/PHASE3_PREPARATION.md), CI workflow | Clean-clone verification (QUALITY_REPORT) | Local setup verified from a fresh clone; hosting out of scope | Complete (local) |
 
 ## Non-functional requirements
 
 | Requirement ID | Requirement | Business objective | Module | Files/API | Test ID | Evidence | Status |
 |---|---|---|---|---|---|---|---|
-| NFR-001 | Security: secrets in env/secret manager, none in Git | All | Platform | [.gitignore](../.gitignore), [SECURITY.md](SECURITY.md) | — | Phase 0: `.env` ignore rules created; not yet tested by a secret scan | In progress |
+| NFR-001 | Security: secrets in env/secret manager, none in Git | All | Platform | `.gitignore`, `.env.example`, SecretStr settings, read-only API account, CI random masked passwords | test_settings_repr_never_shows_passwords, test_database_down_returns_503_without_details | Staged-content scans before every push; npm audit 0 | Complete |
 | NFR-002 | Reliability: failure modes, transactions, retries | Obj 1 | Platform | single-transaction pipeline; audited failures | test_failed_run_rolls_back_and_is_audited | Rollback verified | In progress (API in Milestone C) |
 | NFR-003 | Performance: pagination, aggregate in MySQL | Obj 4 | Platform | agg_* tables + covering indexes (0005/0006) | test_aggregate_table_equals_canonical_view | Full data, best of 3: overview 0.26 s, products/operations/quality < 0.02 s, forecast 0.11 s, customers 1.82 s (above the 1.5 s target) | Partial |
 | NFR-004 | Maintainability: layered backend, modular React | All | Platform | [PROJECT_SPEC.md §3](PROJECT_SPEC.md) | — | Design only | Not started |
-| NFR-005 | Testability: unit/integration/API/SQL/frontend/E2E | All | Platform | [TEST_STRATEGY.md](TEST_STRATEGY.md) | — | Strategy only | Not started |
+| NFR-005 | Testability: unit/integration/API/SQL/frontend/E2E | All | Platform | backend/tests, scripts/profiling/tests, frontend/src/test, frontend/e2e, `.github/workflows/ci.yml` | pytest 112, vitest 8, Playwright 7 | CI runs all but E2E | Complete |
 | NFR-006 | Accessibility | Obj 4 | Frontend | Semantic landmarks, labelled controls, focus-visible, status text plus colour, reduced motion | frontend.test.tsx (roles/labels), e2e | No automated WCAG audit tool run | Partial |
 | NFR-007 | Observability: structured, non-sensitive logs | Obj 4 | Platform | JSON access log (request_id, method, path, status, duration); no query values | test_database_down_returns_503_without_details | Credentials never logged (test) | Complete |
 | NFR-008 | Reproducibility: pinned deps, deterministic fixtures | Obj 1 | Platform | `requirements/*.txt` (hashed), fixture generator | test_rebuild_from_scratch_is_deterministic | `--require-hashes` install OK; Phase 2 reports regenerated byte-identical | Complete |
-| NFR-009 | Portability: local setup + Render deploy docs | Obj 8 | Docs | — | — | — | Not started |
+| NFR-009 | Portability: local setup + Render deploy docs | Obj 8 | Docs | README, setup guide, CI on Linux | Clean clone + CI | Render deployment deferred (no paid hosting, owner decision) | Partial |
 | NFR-010 | Data integrity: constraints, RI, reconciliation | Obj 2 | Data | PK/FK/CHECK constraints; `scripts/verify_dev_load.py` | test_relationships_and_flags, test_reconciliation_raw_to_marts | 28/28 reconciliation on full data | Complete |
 
 ## Module acceptance criteria (from `instructions/05`)

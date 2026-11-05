@@ -56,12 +56,17 @@ Last updated: 2026-10-31 (Phase 0). Items marked *(expected)* come from public d
 
 ## Milestone C limitations
 - L-C01 Customers endpoint takes about 1.8 s on the full data (NFR-003 target 1.5 s); other endpoints are under 0.3 s.
-- L-C02 Full load now takes about 9 minutes (aggregate refresh doubled it).
+- L-C02 A full reload takes about 7.5 minutes (first load into empty tables about 4.5 minutes). Profiling (D-023): deleting the previous load is the largest step; kept for rollback safety.
 - L-C03 Filters are period-only (whole months); no category or state filters.
 - L-C04 Executive report is HTML only (no PDF); no authentication (local, read-only data).
 - L-C05 Frontend bundle 680 kB (charts library); no code splitting.
-- L-C06 `npm audit` moderate advisory in dev-only ESLint dependency (minimatch); production dependencies clean.
+- L-C06 Resolved: minimatch advisory fixed with an npm override (D-023); `npm audit` reports 0 vulnerabilities.
 - L-C07 No automated accessibility audit has been run.
+
+## Milestone D limitations
+- L-D01 No Power BI `.pbix` is included; it must be built in Power BI Desktop from the specification.
+- L-D02 No hosted deployment (Render and managed MySQL deferred: no paid services). Local execution only.
+- L-D03 Playwright E2E runs locally only (needs the licensed dataset); CI covers everything else.
 
 ## Phase 2 tooling notes
 - Profiling ran in a throwaway scratch environment (Python 3.13.2, pandas 3.1.0, numpy 2.5.4). These versions installed and ran correctly; this is early evidence for D-002/D-003 compatibility, not the locked project environment (Phase 3).

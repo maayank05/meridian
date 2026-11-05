@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          # Throwaway container that exists only for this job; root is used solely to create the test accounts.
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      MERIDIAN_ENV: test
+      DB_HOST: 127.0.0.1
+      DB_PORT: "3306"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install locked dependencies
+        run: |
+          python -m pip install --require-hashes -r requirements/requirements.txt -r requirements/requirements-dev.txt
+          python -m pip install --no-deps --no-build-isolation -e .
+      - name: Ruff
+        run: |
+          ruff check .
+          ruff format --check .
+      - name: Create databases and least-privilege accounts (CI only)
+        run: |
+          for v in DB_OWNER_PASSWORD DB_READER_PASSWORD TEST_DB_PASSWORD; do
+            pw=$(openssl rand -hex 16); echo "::add-mask::$pw"; echo "$v=$pw" >> "$GITHUB_ENV"; export "$v=$pw"
+          done
+          # In CI the client connects from the Docker network, so accounts use host '%' (container is ephemeral);
+          # locally the accounts are 'localhost'-only (docs/setup/PHASE3_PREPARATION.md).
+          mysql -h 127.0.0.1 -u root <<SQL
+          CREATE DATABASE meridian_dev CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+          CREATE DATABASE meridian_test CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+          CREATE USER 'meridian_owner'@'%' IDENTIFIED BY '${DB_OWNER_PASSWORD}';
+          CREATE USER 'meridian_reader'@'%' IDENTIFIED BY '${DB_READER_PASSWORD}';
+          CREATE USER 'meridian_test'@'%' IDENTIFIED BY '${TEST_DB_PASSWORD}';
+          GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES, CREATE VIEW, SHOW VIEW, CREATE TEMPORARY TABLES, LOCK TABLES ON meridian_dev.* TO 'meridian_owner'@'%';
+          GRANT SELECT, SHOW VIEW ON meridian_dev.* TO 'meridian_reader'@'%';
+          GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES, CREATE VIEW, SHOW VIEW, CREATE TEMPORARY TABLES, LOCK TABLES ON meridian_test.* TO 'meridian_test'@'%';
+          SQL
+      - name: Apply migrations to meridian_dev (schema only; no Olist data in CI)
+        run: python -c "from meridian.db import Role, make_engine; from meridian.migrations import migrate; print(migrate(make_engine(Role.OWNER)))"
+      - name: Pytest (unit, MySQL integration on the synthetic fixture, profiling scripts)
+        run: python -m pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test
+      - run: npm run build

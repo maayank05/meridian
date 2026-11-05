@@ -93,4 +93,4 @@ Remaining phases are delivered as four milestones with one checkpoint each:
 - **A** Phase 3: data pipeline. **Done**, see [PHASE_03_CHECKPOINT](checkpoints/PHASE_03_CHECKPOINT.md).
 - **B** Phases 4–7: core SQL analytics, Python services, one forecast vs baseline, compact decision simulator. **Done**, see [PHASE_07_CHECKPOINT](checkpoints/PHASE_07_CHECKPOINT.md).
 - **C** Phases 8, 9, 11: FastAPI, React (about 5 pages), concise executive report. **Done**, see [PHASE_11_CHECKPOINT](checkpoints/PHASE_11_CHECKPOINT.md).
-- **D** Phases 12–13: CI, README, short learning guide, clean-clone check. Power BI = spec + DAX (owner builds PBIX); paid hosting deferred.
+- **D** Phases 12–13: CI, README, short learning guide, clean-clone check. Power BI = spec + DAX (owner builds PBIX); paid hosting deferred. **Done**, see [PHASE_13_CHECKPOINT](checkpoints/PHASE_13_CHECKPOINT.md).

@@ -32,6 +32,7 @@ def main() -> None:
     for table, n in result.row_counts.items():
         print(f"  {table:28} {n:>10,}")
     print(f"  distinct local timestamps by tz status: {result.tz_status_counts}")
+    print(f"  step seconds: {result.step_seconds}")
     print("  data-quality checks:")
     for check_id, n in result.quality.items():
         print(f"    {check_id:36} {n:>8,}")

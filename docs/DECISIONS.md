@@ -179,3 +179,10 @@ Still open: D-011 (Phase 12).
 - **Cohorts:** cells up to 2018-08 are observable (missing = real 0); later cells are unobservable and blank.
 - **Dev-only advisory accepted:** `npm audit` reports a moderate minimatch ReDoS inside ESLint tooling (dev dependency); production dependencies have 0 vulnerabilities. Not force-fixed (it would downgrade ESLint).
 - **E2E port 5180:** the Playwright run uses port 5180 to avoid conflicts with other local projects.
+
+## D-023 — Milestone D: CI, security fix, reload performance, Power BI scope
+- **Date / status:** 2026-11-06 / Accepted under the owner's completion authorization.
+- **CI:** GitHub Actions runs Ruff, the full pytest suite (incl. MySQL integration on the synthetic fixture) against a throwaway `mysql:8.0` service container with per-run random passwords, and the frontend lint/typecheck/test/build. CI accounts use host `'%'` because the runner connects over the Docker network; local accounts stay `localhost`-only. Playwright E2E needs the licensed dataset and is run locally only.
+- **npm advisory fixed minimally:** GHSA-g3hv-75wg-m249 (moderate ReDoS) in `minimatch` 10.2.6, reached only through ESLint dev tooling (not in the production bundle). An npm `overrides` entry pins the patched `minimatch` 11.0.5. ESLint is unchanged and its output was byte-identical before and after; `npm audit` reports 0 vulnerabilities. npm's suggested fix (downgrade ESLint 10 to 9) was rejected as breaking.
+- **Reload time investigated, not changed:** per-step timing (run 3, 449.8 s) shows clear 128.7 s, staging 70.0, timezones 68.5, aggregates 55.8, marts 54.7, raw load 53.2, checks 12.9. The summary-table refresh is about 12%; the largest cost is deleting the previous load. Faster alternatives (TRUNCATE, table swaps) commit implicitly in MySQL and would break the tested rollback guarantee, so correctness was kept.
+- **Power BI:** specification, DAX and generated reconciliation targets only. No `.pbix` (D-012).

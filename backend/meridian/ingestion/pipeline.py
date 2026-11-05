@@ -8,6 +8,7 @@
 
 import hashlib
 import logging
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -53,6 +54,7 @@ class RunResult:
     row_counts: dict[str, int]
     quality: dict[str, int]
     tz_status_counts: dict[str, int] = field(default_factory=dict)
+    step_seconds: dict[str, float] = field(default_factory=dict)
 
 
 def read_source(raw_dir: Path, source: SourceFile) -> LoadedFile:
@@ -110,6 +112,7 @@ def _build_tz_map(conn: Connection, tz_name: str) -> dict[str, int]:
 
 def run_pipeline(engine: Engine, raw_dir: Path, tz_name: str = "America/Sao_Paulo") -> RunResult:
     loaded = validate_sources(raw_dir)
+    steps: dict[str, float] = {}
     with engine.begin() as conn:
         run_id = conn.execute(
             text(
@@ -120,20 +123,34 @@ def run_pipeline(engine: Engine, raw_dir: Path, tz_name: str = "America/Sao_Paul
         ).lastrowid
     try:
         with engine.begin() as conn:
+            clock = time.perf_counter()
+
+            def lap(step: str) -> None:
+                nonlocal clock
+                steps[step] = round(time.perf_counter() - clock, 1)
+                clock = time.perf_counter()
+
             run_sql_file(conn, TRANSFORMS / "00_clear.sql")
+            lap("clear")
             for item in loaded:
                 _load_raw(conn, item)
+            lap("raw_load")
             run_sql_file(conn, TRANSFORMS / "10_staging.sql")
+            lap("staging")
             tz_counts = _build_tz_map(conn, tz_name)
             run_sql_file(conn, TRANSFORMS / "20_apply_timezones.sql")
+            lap("timezones")
             quality = run_checks(conn)
+            lap("quality_checks")
             failed = blocking_failures(quality)
             if failed:
                 raise QualityGateError(
                     "Blocking data-quality checks failed: " + ", ".join(f"{c}={quality[c]}" for c in failed)
                 )
             run_sql_file(conn, TRANSFORMS / "30_marts.sql")
+            lap("marts")
             run_sql_file(conn, TRANSFORMS / "40_aggregates.sql")
+            lap("aggregates")
             for item in loaded:
                 conn.execute(
                     text(
@@ -175,4 +192,4 @@ def run_pipeline(engine: Engine, raw_dir: Path, tz_name: str = "America/Sao_Paul
             )
         log.error("Pipeline run %s failed: %s", run_id, type(exc).__name__)
         raise
-    return RunResult(run_id, {i.source.raw_table: len(i.frame) for i in loaded}, quality, tz_counts)
+    return RunResult(run_id, {i.source.raw_table: len(i.frame) for i in loaded}, quality, tz_counts, steps)
