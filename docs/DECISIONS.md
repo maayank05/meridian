@@ -159,3 +159,12 @@ Still open: D-011 (Phase 12).
 - **Locking (D-003 met):** `requirements/*.in` → hashed `requirements/*.txt` via pip-tools; installs use `--require-hashes`.
 - **Pipeline shape:** full refresh in **one transaction** (DELETE, not TRUNCATE) so any failure rolls back to the previous state; the audit run row is written in a separate transaction so failures are recorded.
 - **Revisit trigger:** remote/managed MySQL, or certificate verification needed.
+
+## D-021 — Milestone B analytics choices
+- **Date / status:** 2026-11-06 / Accepted as implementation detail within the approved stack (Statsmodels added to the lock; part of D-001). Listed for owner review.
+- **Canonical KPIs = SQL views** (`backend/sql/migrations/0004_kpi_views.sql`). API, report and Power BI read these views. Ratios over a period are recomputed from summed numerators/denominators, never averaged across months.
+- **Independent check:** `backend/meridian/analytics/kpis.py` recomputes the same KPIs from the raw CSV files with pandas/Decimal. `scripts/reconcile_kpis.py` compares both on the full dataset.
+- **Forecast (K25):** rolling-origin one-step evaluation (6 test months) of naive, seasonal naive and damped Holt on the D-018 window. The model is used only if it beats the best baseline. Result 2026-11-06: **not justified**; the naive baseline is used ([FORECAST_REPORT](analytics/FORECAST_REPORT.md)). No scikit-learn model: nothing more complex is defensible on 20 months.
+- **Simulator:** ROI is computed on an explicitly **synthetic contribution margin** applied to incremental revenue proxy, never on revenue (RULE-18/20). Zero cost → ROI undefined.
+- **M03 campaign scenario:** uses explicit user-entered assumptions (spend, attribution share, incremental lift, margin) instead of a seeded random spend generator. Deterministic inputs are simpler and equally clearly labelled; recorded as CR-005.
+- **Deferred:** K09 RFM (frequency is 1 for about 97% of people, R-08, so quintile RFM adds little) and K17 seller handover (low confidence). Both are documented as not implemented.

@@ -75,4 +75,5 @@ The user wants a complete project built first and intends to learn it from the g
 - Lint: `.venv\Scripts\ruff check .` and `.venv\Scripts\ruff format --check .`
 - Tests: `.venv\Scripts\python -m pytest` (MySQL tests use meridian_test only)
 - Load: `.venv\Scripts\python -m meridian.ingestion`; reconcile: `.venv\Scripts\python scripts/verify_dev_load.py`
+- KPIs: `.venv\Scripts\python scripts/reconcile_kpis.py`; forecast report: `.venv\Scripts\python scripts/forecast_report.py`
 - Before every push: verify the staged list and scan staged content (no .env, secrets, raw data, review text, record IDs, personal paths); LICENSE untouched.

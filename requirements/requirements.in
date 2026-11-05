@@ -4,3 +4,4 @@ SQLAlchemy
 PyMySQL
 pydantic-settings
 tzdata
+statsmodels

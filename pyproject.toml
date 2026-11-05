@@ -36,6 +36,7 @@ ignore = [
 "**/tests/**" = ["S101", "S608"]
 "backend/meridian/ingestion/quality.py" = ["S608"]   # table/column names come from a fixed internal tuple
 "backend/meridian/ingestion/pipeline.py" = ["S608"]  # table/column names come from the fixed SOURCES spec
+"scripts/forecast_report.py" = ["E501"]  # Markdown template lines
 "scripts/profiling/*.py" = ["PLR0915", "PLR0911", "PLR0912", "E501", "S603"]  # Phase 2 profiling scripts (verified outputs)
 
 [tool.ruff.format]

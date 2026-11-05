@@ -48,6 +48,12 @@ Last updated: 2026-10-31 (Phase 0). Items marked *(expected)* come from public d
 - L-A05 85 `review_creation_date` values carry a non-midnight time but are stored as DATE (D-017 T6); counted in the DQ results.
 - L-A06 Repeat-load idempotency and rebuild determinism are proven on the fixture; the full dataset was loaded once.
 
+## Milestone B limitations
+- L-B01 The forecast model does not beat the naive baseline; forecasts use the naive method and cover months outside the data (unverifiable).
+- L-B02 K09 RFM and K17 seller-handover KPIs are not implemented (D-021).
+- L-B03 MySQL `SUM()` over boolean expressions returns DECIMAL; consumers must convert counts to integers (handled in services; API in Milestone C).
+- L-B04 Simulator and campaign outputs depend entirely on user-entered synthetic assumptions (margin, uplift, lift, attribution) and are never results.
+
 ## Phase 2 tooling notes
 - Profiling ran in a throwaway scratch environment (Python 3.13.2, pandas 3.1.0, numpy 2.5.4). These versions installed and ran correctly; this is early evidence for D-002/D-003 compatibility, not the locked project environment (Phase 3).
 - The profiler scripts are committed under `scripts/profiling/` (Milestone A) with fixture tests and a reproduction guide.

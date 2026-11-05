@@ -62,7 +62,7 @@ def test_every_sql_file_parses():
 
 
 def test_migrations_are_contiguous():
-    assert [v for v, _ in discover()] == [1, 2, 3]
+    assert [v for v, _ in discover()] == [1, 2, 3, 4]
 
 
 def test_bad_migration_name_rejected(tmp_path):

@@ -20,7 +20,10 @@ Status: Draft v0.1 (Phase 1) · Last updated: 2026-10-31 · Decision: D-015 (opt
 - **Incremental outcome:** the difference between what happened *with* the campaign and what would have happened *without* it (the counterfactual). Measuring it requires a credible comparison group, such as a randomised holdout, geo experiment, or a quasi-experimental design with stated assumptions.
 - **Why it matters:** ROAS on attributed revenue usually overstates value. A campaign can show high attributed ROAS and near-zero incremental lift.
 
-## 3. Synthetic campaign scenario model (design — built in Phase 7)
+## 3. Synthetic campaign scenario model (built in Milestone B: `CampaignScenario` in `backend/meridian/analytics/simulator.py`)
+
+> **Implementation note (CR-005):** spend, attribution share, incremental lift and margin are entered explicitly as assumptions instead of drawn by a seeded random generator. The outputs are scenario CAC, attributed ROAS vs incremental ROAS, incremental revenue proxy and net benefit, all labelled `scenario_output`.
+
 Purpose: let stakeholders explore how spend, attribution assumptions and lift assumptions change CAC, ROAS and net benefit. It is **not** a claim about real performance.
 
 | Element | Design |

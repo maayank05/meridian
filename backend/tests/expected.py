@@ -63,3 +63,105 @@ QUALITY = {
     "tz_ambiguous_timestamps": 1,  # order-2 purchase 2018-02-17 23:30 (DST fall-back hour)
     "tz_nonexistent_timestamps": 0,
 }
+
+# ---------------------------------------------------------------- Milestone B KPIs (hand-calculated)
+# Orders by purchase month: 2016-10 o6 unavailable | 2017-03 o1 delivered | 2017-10 o3 canceled, o5 delivered |
+# 2018-02 o2 delivered | 2018-08 o4 shipped.  Delivered item prices: o1 100+100+50.50, o2 75.25, o5 50.50.
+MONTHLY = {
+    "2016-10": {
+        "orders_placed": 1,
+        "delivered_orders": 0,
+        "delivered_merchandise_value": Decimal("0"),
+        "freight_billed": Decimal("0"),
+        "delivered_items": 0,
+        "canceled_orders": 0,
+        "unavailable_orders": 1,
+        "active_customers": 0,
+        "active_sellers": 0,
+    },
+    "2017-03": {
+        "orders_placed": 1,
+        "delivered_orders": 1,
+        "delivered_merchandise_value": Decimal("250.50"),
+        "freight_billed": Decimal("20.00"),
+        "delivered_items": 3,
+        "canceled_orders": 0,
+        "unavailable_orders": 0,
+        "active_customers": 1,
+        "active_sellers": 2,
+    },
+    "2017-10": {
+        "orders_placed": 2,
+        "delivered_orders": 1,
+        "delivered_merchandise_value": Decimal("50.50"),
+        "freight_billed": Decimal("8.00"),
+        "delivered_items": 1,
+        "canceled_orders": 1,
+        "unavailable_orders": 0,
+        "active_customers": 1,
+        "active_sellers": 1,
+    },
+    "2018-02": {
+        "orders_placed": 1,
+        "delivered_orders": 1,
+        "delivered_merchandise_value": Decimal("75.25"),
+        "freight_billed": Decimal("12.75"),
+        "delivered_items": 1,
+        "canceled_orders": 0,
+        "unavailable_orders": 0,
+        "active_customers": 1,
+        "active_sellers": 1,
+    },
+    "2018-08": {
+        "orders_placed": 1,
+        "delivered_orders": 0,
+        "delivered_merchandise_value": Decimal("0"),
+        "freight_billed": Decimal("0"),
+        "delivered_items": 0,
+        "canceled_orders": 0,
+        "unavailable_orders": 0,
+        "active_customers": 0,
+        "active_sellers": 0,
+    },
+}
+K01_TOTAL = Decimal("376.25")  # 250.50 + 50.50 + 75.25
+CATEGORY_VALUE = {"health_beauty": Decimal("200.00"), "pc_gamer": Decimal("101.00"), "unknown": Decimal("75.25")}
+# Lead time (UTC): o1 2017-03-10 13:00 -> 2017-03-20 18:00 = 882,000 s; o5 2017-10-15 11:00 -> 2017-10-20 20:00
+# = 464,400 s; o2 excluded (ambiguous purchase time). All 3 delivered on/before the estimate.
+DELIVERY = {
+    "delivered_orders": 3,
+    "excluded_missing_delivery_date": 0,
+    "excluded_ambiguous_time": 1,
+    "lead_time_orders": 2,
+    "avg_lead_time_seconds": 673200.0,
+    "on_time_orders": 3,
+    "late_orders": 0,
+    "avg_days_late": None,
+}
+# Order scores: o1 5, o2 4, o5 4 (shared review-2), o4 1 -> mean 3.5; shared orders o2, o5.
+REVIEWS = {"orders_with_review": 4, "avg_review_score": 3.5, "orders_with_shared_review": 2}
+# Valid instalments: 4, 1, 1, 1, 1, 1 (credit-card 0 excluded) -> 9 / 6 = 1.5
+PAYMENTS = {
+    "by_type": {
+        "boleto": (1, Decimal("88.00")),
+        "credit_card": (3, Decimal("245.00")),
+        "debit_card": (1, Decimal("60.00")),
+        "voucher": (2, Decimal("90.50")),
+    },
+    "avg_valid_installments": 1.5,
+    "invalid_records": 1,
+}
+RECONCILIATION = {
+    "orders_with_both": 4,
+    "matched_orders": 3,
+    "payments_higher_orders": 1,
+    "payments_lower_orders": 0,
+    "items_only_orders": 0,
+    "payments_only_orders": 2,
+}
+# People: person-1 (o1 2017-03, o2 2018-02), person-4 (o5 2017-10).
+COHORTS = {("2017-03", 0): 1, ("2017-03", 11): 1, ("2017-10", 0): 1}
+REPEAT_DEFAULT_WINDOW = {"customers": 2, "repeat_customers": 1, "repeat_rate": 0.5}
+# Top 10% = ceil(0.1 * n) = 1 contributor. People: 325.75, 50.50. Sellers: seller-1 275.25, seller-2 101.00.
+CUSTOMER_TOP10_SHARE = float(Decimal("325.75") / Decimal("376.25"))
+SELLER_TOP10_SHARE = float(Decimal("275.25") / Decimal("376.25"))

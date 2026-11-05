@@ -18,15 +18,16 @@ def reset_database(engine: Engine) -> None:
         db = conn.execute(text("SELECT DATABASE()")).scalar_one()
         if not db.endswith("_test"):
             raise RuntimeError(f"refusing to reset non-test database {db!r}")
-        tables = [
-            r[0]
-            for r in conn.execute(
-                text("SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()")
-            )
-        ]
+        objects = conn.execute(
+            text("SELECT table_name, table_type FROM information_schema.tables WHERE table_schema = DATABASE()")
+        ).all()
+        for name, kind in objects:  # views first: they depend on tables
+            if kind == "VIEW":
+                conn.execute(text(f"DROP VIEW `{name}`"))
         conn.execute(text("SET FOREIGN_KEY_CHECKS = 0"))
-        for t in tables:
-            conn.execute(text(f"DROP TABLE `{t}`"))
+        for name, kind in objects:
+            if kind != "VIEW":
+                conn.execute(text(f"DROP TABLE `{name}`"))
         conn.execute(text("SET FOREIGN_KEY_CHECKS = 1"))
 
 
