@@ -1,6 +1,6 @@
 # Requirements Traceability Matrix
 
-Last updated: 2026-11-06 (Milestone B / Phases 4-7)
+Last updated: 2026-11-06 (Milestone C / Phases 8, 9, 11)
 
 A requirement is **Complete** only when it maps to implementation, an executed test, and recorded evidence. Statuses: Not started · In progress · Complete · Partial (documented limitation) · Blocked · Deferred · Unsupported by source data.
 
@@ -10,28 +10,28 @@ A requirement is **Complete** only when it maps to implementation, an executed t
 
 | Requirement ID | Requirement | Business objective | Module | Files/API | Test ID | Evidence | Status |
 |---|---|---|---|---|---|---|---|
-| FR-001 | Responsive React app with clear navigation | Obj 4 | Platform | — | — | — | Not started |
-| FR-002 | FastAPI REST endpoints: health, metadata, filters, analytics | Obj 4 | Platform | — | — | — | Not started |
-| FR-003 | Consistent loading/empty/validation/error states | Obj 4 | Platform | — | — | — | Not started |
-| FR-004 | Documented date and dimension filters | Obj 3, 4 | Platform | — | — | — | Not started |
-| FR-005 | Show freshness, source, definition, provenance class | Obj 3, 6 | Platform | — | — | — | Not started |
+| FR-001 | Responsive React app with clear navigation | Obj 4 | Platform | `frontend/src/app/App.tsx` (5 pages, sidebar, responsive at 820px) | e2e/smoke.spec.ts (7), src/test/frontend.test.tsx | Playwright 7/7 on real data; screenshots in docs/screenshots | Complete |
+| FR-002 | FastAPI REST endpoints: health, metadata, filters, analytics | Obj 4 | Platform | `backend/meridian/api/` (/api/v1: health, ready, metadata, overview, customers, products, operations, quality, forecast, simulator, reports) | test_api_mysql.py (22) | OpenAPI at /docs; error envelope, request IDs, CORS | Complete |
+| FR-003 | Consistent loading/empty/validation/error states | Obj 4 | Platform | `components/ui.tsx` (AsyncSection, Loading, ErrorState with retry, EmptyState) | frontend.test.tsx (states, empty chart) | No mock data in production bundle (checked) | Complete |
+| FR-004 | Documented date and dimension filters | Obj 3, 4 | Platform | Month period filter (URL state, reset, validation); month-aligned API periods (D-022) | test_invalid_periods_return_envelope, app-shell test, e2e invalid period | Category/state filters not implemented (lean scope) | Partial |
+| FR-005 | Show freshness, source, definition, provenance class | Obj 3, 6 | Platform | Provenance badges on every KPI/card; definitions; freshness in sidebar | frontend.test.tsx, test_quality_and_metadata | Shown on all pages (screenshots) | Complete |
 | FR-010 | Repeatable Python ingestion of local Olist files | Obj 1 | Data | `backend/meridian/ingestion/` (`python -m meridian.ingestion`) | test_clean_load_row_counts, test_all_fixture_files_validate | Full load run 1: 9 files / 1,550,922 rows, 271.5 s | Complete |
 | FR-011 | Validate files, columns, types, candidate keys and relationships | Obj 1, 2 | Data / M09 | `pipeline.validate_sources`, staging PKs, `quality.py` blocking checks | test_missing_file_fails*, test_renamed_column_fails, test_failed_run_rolls_back_and_is_audited | Strict headers; PK/FK enforced; 6 blocking orphan checks = 0 on full data | Complete |
 | FR-012 | Preserve raw source data and record ingestion metadata | Obj 1 | Data | `raw_*` tables, `audit_ingestion_run`, `audit_source_file` | test_raw_text_preserved_exactly | Raw text unchanged; SHA-256 per file recorded and matched (verify_dev_load 28/28) | Complete |
 | FR-013 | Ordered SQL transformations to analytical tables | Obj 2 | Data | `backend/sql/migrations/`, `backend/sql/transforms/` | test_reconciliation_raw_to_marts, test_relationships_and_flags | dim/fact marts with stated grain and FKs | Complete |
 | FR-014 | Explicit, safe rebuild/reload | Obj 1 | Data | single-transaction full refresh; production refusal in CLI | test_repeat_load_is_idempotent, test_rebuild_from_scratch_is_deterministic, test_invalid_value_fails_under_strict_mode_and_rolls_back | Checksums identical across reload/rebuild; failed runs leave prior state | Complete |
 | FR-015 | Ingestion and data-quality reports | Obj 1, 3 | Data / M09 | `audit_dq_result` (27 checks per run), CLI summary | test_quality_results_match_hand_calculation | Full-data DQ counts equal Phase 2 profile | Complete (UI view in Milestone C) |
-| FR-020 | Executive commercial KPIs | Obj 3 | M01 | `vw_kpi_monthly`, `services.period_summary` (prior-period comparison) | test_monthly_view_matches_hand_calculation_and_python, test_services_on_fixture | reconcile_kpis.py: monthly family MATCH on full data | In progress (API/UI in Milestone C) |
+| FR-020 | Executive commercial KPIs | Obj 3 | M01 | `vw_kpi_monthly`, `services.period_summary` (prior-period comparison) | test_monthly_view_matches_hand_calculation_and_python, test_services_on_fixture | reconcile_kpis.py: monthly family MATCH on full data | Complete (API + UI + tests, Milestone C) |
 | FR-021 | Customer purchase, cohort, segmentation | Obj 3 | M02 | `vw_cohort_retention`, `services.repeat_rate`, `services.concentration` | test_cohort_view, test_cohorts_and_repeat_rate | K07/K08 MATCH on full data; K09 RFM deferred (D-021) | Partial |
-| FR-022 | Product/category performance | Obj 3 | M04 | `vw_kpi_category_monthly` | test_category_view | 74 categories MATCH on full data | In progress (UI in Milestone C) |
+| FR-022 | Product/category performance | Obj 3 | M04 | `vw_kpi_category_monthly` | test_category_view | 74 categories MATCH on full data | Complete (API + UI + tests, Milestone C) |
 | FR-023 | Seller and fulfilment analysis | Obj 3 | M05 | `vw_kpi_delivery_monthly`, active sellers, seller concentration | test_delivery_view, test_services_on_fixture | K14-K16 MATCH on full data; K17 deferred (low confidence) | Partial |
-| FR-024 | Financial reconciliation and scenarios, no unsupported profit | Obj 3, 6 | M06 | `vw_payment_reconciliation`, simulator (synthetic margin) | test_reconciliation_view, test_simulator.py | K18 MATCH on full data; no profit metric exists | In progress (UI in Milestone C) |
+| FR-024 | Financial reconciliation and scenarios, no unsupported profit | Obj 3, 6 | M06 | `vw_payment_reconciliation`, simulator (synthetic margin) | test_reconciliation_view, test_simulator.py | K18 MATCH on full data; no profit metric exists | Complete (API + UI + tests, Milestone C) |
 | FR-025 | Data-quality monitoring and downstream impact | Obj 3 | M09 | — | — | — | Not started |
-| FR-026 | Scenario comparison with documented assumptions | Obj 6 | M07 | `analytics/simulator.py` | test_simulator.py (15 cases, hand-calculated incl. US-022) | Zero-cost ROI undefined; invalid inputs rejected | In progress (API/UI in Milestone C) |
-| FR-027 | Statistics and forecasts only when justified | Obj 3 | M08 | `analytics/forecast.py`, `scripts/forecast_report.py` | test_forecast.py | [FORECAST_REPORT](analytics/FORECAST_REPORT.md): model not justified, naive used | In progress (UI in Milestone C) |
-| FR-028 | Reproducible executive report | Obj 3 | M10 | — | — | — | Not started |
+| FR-026 | Scenario comparison with documented assumptions | Obj 6 | M07 | `analytics/simulator.py` | test_simulator.py (15 cases, hand-calculated incl. US-022) | Zero-cost ROI undefined; invalid inputs rejected | Complete (API + UI + tests, Milestone C) |
+| FR-027 | Statistics and forecasts only when justified | Obj 3 | M08 | `analytics/forecast.py`, `scripts/forecast_report.py` | test_forecast.py | [FORECAST_REPORT](analytics/FORECAST_REPORT.md): model not justified, naive used | Complete (API + UI + tests, Milestone C) |
+| FR-028 | Reproducible executive report | Obj 3 | M10 | `meridian/reporting/executive.py`, `/api/v1/reports/executive`, `scripts/executive_report.py` | test_executive_report_matches_api | Report payloads equal API JSON; timestamped; limitations; HTML only (no PDF) | Complete |
 | FR-029 | Power BI model + DAX docs with reconciliation tests | Obj 5 | Power BI | — | — | — | Not started |
-| FR-030 | Synthetic marketing campaign scenario model with methodology and limitations (added via CR-001 / D-015) | Obj 6 | M03 | `simulator.CampaignScenario`; [14_M03_marketing_methodology.md](../business/14_M03_marketing_methodology.md) | test_campaign_scenario_attributed_vs_incremental | Attributed vs incremental ROAS demonstrated (CR-005) | In progress (UI in Milestone C) |
+| FR-030 | Synthetic marketing campaign scenario model with methodology and limitations (added via CR-001 / D-015) | Obj 6 | M03 | `simulator.CampaignScenario`; [14_M03_marketing_methodology.md](../business/14_M03_marketing_methodology.md) | test_campaign_scenario_attributed_vs_incremental | Attributed vs incremental ROAS demonstrated (CR-005) | Complete (API + UI + tests, Milestone C) |
 | FR-040 | BRD, FRD, stories, AC, process flows, KPI/data dictionaries, RAID, traceability | Obj 7 | M09 / BA | [business/](../business/) 01–14; [DATA_DICTIONARY](data/DATA_DICTIONARY.md) (Phase 2) | TST-US-029 (planned) | Phase 1 BA docs; Phase 2 data dictionary (52 columns) and KPI impact | In progress |
 | FR-041 | Architecture, lineage, decisions, limitations | Obj 7 | Docs | [PROJECT_SPEC.md](PROJECT_SPEC.md), [DECISIONS.md](DECISIONS.md), [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md) | — | Phase 0: drafts created; lineage pending Phase 3 | In progress |
 | FR-042 | Learning materials | Obj 8 | Learning | — | — | — | Not started |
@@ -43,11 +43,11 @@ A requirement is **Complete** only when it maps to implementation, an executed t
 |---|---|---|---|---|---|---|---|
 | NFR-001 | Security: secrets in env/secret manager, none in Git | All | Platform | [.gitignore](../.gitignore), [SECURITY.md](SECURITY.md) | — | Phase 0: `.env` ignore rules created; not yet tested by a secret scan | In progress |
 | NFR-002 | Reliability: failure modes, transactions, retries | Obj 1 | Platform | single-transaction pipeline; audited failures | test_failed_run_rolls_back_and_is_audited | Rollback verified | In progress (API in Milestone C) |
-| NFR-003 | Performance: pagination, aggregate in MySQL | Obj 4 | Platform | — | — | — | Not started |
+| NFR-003 | Performance: pagination, aggregate in MySQL | Obj 4 | Platform | agg_* tables + covering indexes (0005/0006) | test_aggregate_table_equals_canonical_view | Full data, best of 3: overview 0.26 s, products/operations/quality < 0.02 s, forecast 0.11 s, customers 1.82 s (above the 1.5 s target) | Partial |
 | NFR-004 | Maintainability: layered backend, modular React | All | Platform | [PROJECT_SPEC.md §3](PROJECT_SPEC.md) | — | Design only | Not started |
 | NFR-005 | Testability: unit/integration/API/SQL/frontend/E2E | All | Platform | [TEST_STRATEGY.md](TEST_STRATEGY.md) | — | Strategy only | Not started |
-| NFR-006 | Accessibility | Obj 4 | Frontend | — | — | — | Not started |
-| NFR-007 | Observability: structured, non-sensitive logs | Obj 4 | Platform | — | — | — | Not started |
+| NFR-006 | Accessibility | Obj 4 | Frontend | Semantic landmarks, labelled controls, focus-visible, status text plus colour, reduced motion | frontend.test.tsx (roles/labels), e2e | No automated WCAG audit tool run | Partial |
+| NFR-007 | Observability: structured, non-sensitive logs | Obj 4 | Platform | JSON access log (request_id, method, path, status, duration); no query values | test_database_down_returns_503_without_details | Credentials never logged (test) | Complete |
 | NFR-008 | Reproducibility: pinned deps, deterministic fixtures | Obj 1 | Platform | `requirements/*.txt` (hashed), fixture generator | test_rebuild_from_scratch_is_deterministic | `--require-hashes` install OK; Phase 2 reports regenerated byte-identical | Complete |
 | NFR-009 | Portability: local setup + Render deploy docs | Obj 8 | Docs | — | — | — | Not started |
 | NFR-010 | Data integrity: constraints, RI, reconciliation | Obj 2 | Data | PK/FK/CHECK constraints; `scripts/verify_dev_load.py` | test_relationships_and_flags, test_reconciliation_raw_to_marts | 28/28 reconciliation on full data | Complete |

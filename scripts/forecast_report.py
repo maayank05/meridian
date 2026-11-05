@@ -18,7 +18,7 @@ def main() -> None:
         r = revenue_forecast(conn, n_test=6, horizon=3)
     engine.dispose()
     rows = "\n".join(
-        f"| {ev.method} | {ev.mae:,.0f} | {ev.rmse:,.0f} | {ev.mape:.1%} |"
+        f"| {ev.method} | {ev.mae:,.0f} | {ev.rmse:,.0f} | {'n/a' if ev.mape is None else format(ev.mape, '.1%')} |"
         for ev in sorted(r.evaluations.values(), key=lambda e: e.mae)
     )
     fc = "\n".join(

@@ -56,3 +56,9 @@ def test_interval_contains_point_and_widens():
 def test_short_series_rejected():
     with pytest.raises(ValueError, match="too short"):
         evaluate_and_forecast(pd.Series([1.0] * 8, index=IDX[:8]), n_test=6)
+
+
+def test_mape_undefined_when_an_actual_is_zero():
+    s = pd.Series([0.0 if i % 5 == 0 else 100.0 + i for i in range(20)], index=IDX)
+    r = evaluate_and_forecast(s, n_test=6)
+    assert all(e.mape is None for e in r.evaluations.values())

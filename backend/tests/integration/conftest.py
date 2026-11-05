@@ -10,7 +10,7 @@ from meridian.ingestion.pipeline import run_pipeline
 from meridian.migrations import migrate
 
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures" / "olist"
-DATA_PREFIXES = ("raw_", "stg_", "dim_", "fact_")
+DATA_PREFIXES = ("raw_", "stg_", "dim_", "fact_", "agg_")
 
 
 def reset_database(engine: Engine) -> None:

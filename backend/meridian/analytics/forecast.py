@@ -49,7 +49,7 @@ class Evaluation:
     method: str
     errors: list[float]
     mae: float
-    mape: float
+    mape: float | None
     rmse: float
 
 
@@ -77,13 +77,9 @@ def rolling_origin(series: pd.Series, method: Method, n_test: int) -> list[float
 
 def _evaluate(name: str, errors: list[float], actuals: np.ndarray) -> Evaluation:
     e = np.array(errors)
-    return Evaluation(
-        name,
-        errors,
-        float(np.abs(e).mean()),
-        float(np.mean(np.abs(e) / np.abs(actuals))),
-        float(math.sqrt(np.mean(e**2))),
-    )
+    # MAPE is undefined when any actual is 0 -> None (never inf/NaN in outputs)
+    mape = None if np.any(actuals == 0) else float(np.mean(np.abs(e) / np.abs(actuals)))
+    return Evaluation(name, errors, float(np.abs(e).mean()), mape, float(math.sqrt(np.mean(e**2))))
 
 
 def evaluate_and_forecast(series: pd.Series, n_test: int = 6, horizon: int = 3) -> ForecastResult:

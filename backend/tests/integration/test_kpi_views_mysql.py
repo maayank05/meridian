@@ -139,3 +139,32 @@ def test_reader_can_query_views():
             assert conn.execute(text("SELECT COUNT(*) FROM vw_kpi_monthly")).scalar_one() >= 0
     finally:
         reader.dispose()
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "kpi_monthly",
+        "kpi_category_monthly",
+        "kpi_delivery_monthly",
+        "kpi_reviews_monthly",
+        "kpi_payments_monthly",
+        "payment_reconciliation",
+        "cohort_retention",
+    ],
+)
+def test_aggregate_table_equals_canonical_view(engine, loaded, name):
+    """agg_* is a pre-computed copy of vw_* (NFR-003); it must be identical row for row."""
+    view = rows(engine, f"SELECT * FROM vw_{name}")
+    agg = rows(engine, f"SELECT * FROM agg_{name}")
+
+    def key(r):
+        return tuple(str(v) for v in r.values())
+
+    assert sorted(agg, key=key) == sorted(view, key=key) and len(view) > 0
+
+
+def test_customer_and_seller_month_rollups(engine, loaded):
+    cm = rows(engine, "SELECT SUM(delivered_merchandise_value) v, SUM(delivered_orders) n FROM agg_customer_month")[0]
+    assert (cm["v"], cm["n"]) == (E.K01_TOTAL, 3)
+    assert rows(engine, "SELECT SUM(delivered_merchandise_value) v FROM agg_seller_month")[0]["v"] == E.K01_TOTAL

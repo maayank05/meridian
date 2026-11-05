@@ -34,7 +34,7 @@ def _ratio(num, den) -> float | None:
 def monthly_kpis(conn: Connection, start: date = DEFAULT_START, end: date = DEFAULT_END) -> pd.DataFrame:
     rows = (
         conn.execute(
-            text("SELECT * FROM vw_kpi_monthly WHERE month_start BETWEEN :s AND :e ORDER BY month_start"),
+            text("SELECT * FROM agg_kpi_monthly WHERE month_start BETWEEN :s AND :e ORDER BY month_start"),
             {"s": start.replace(day=1), "e": end},
         )
         .mappings()
@@ -47,11 +47,8 @@ def _totals(conn: Connection, start: date, end: date) -> dict:
     df = monthly_kpis(conn, start, end)
     t = {c: (df[c].sum() if len(df) else 0) for c in SUM_COLUMNS}
     people = conn.execute(
-        text(
-            "SELECT COUNT(DISTINCT c.customer_unique_id) FROM fact_orders o JOIN dim_customer c USING (customer_id) "
-            "WHERE o.order_status = 'delivered' AND o.purchase_date BETWEEN :s AND :e"
-        ),
-        {"s": start, "e": end},
+        text("SELECT COUNT(DISTINCT customer_unique_id) FROM agg_customer_month WHERE month_start BETWEEN :s AND :e"),
+        {"s": start.replace(day=1), "e": end},
     ).scalar_one()
     t |= {
         "active_customers": int(people),
@@ -76,61 +73,76 @@ class PeriodSummary:
     prior: dict
 
 
+def month_end(d: date) -> date:
+    nxt = date(d.year + d.month // 12, d.month % 12 + 1, 1)
+    return nxt - timedelta(days=1)
+
+
+def add_months(d: date, n: int) -> date:
+    m = d.year * 12 + d.month - 1 + n
+    return date(m // 12, m % 12 + 1, 1)
+
+
 def period_summary(conn: Connection, start: date = DEFAULT_START, end: date = DEFAULT_END) -> PeriodSummary:
-    """Current period vs the immediately preceding period of equal length (RULE-22)."""
+    """Current whole-month period vs the immediately preceding period with the same number of months (RULE-22)."""
     if start > end:
         raise ValueError("start must not be after end")
-    length = (end - start).days + 1
+    if start.day != 1 or end != month_end(end):
+        raise ValueError("periods must start on the first and end on the last day of a month")
+    n_months = (end.year - start.year) * 12 + end.month - start.month + 1
+    prior_start = add_months(start, -n_months)
     prior_end = start - timedelta(days=1)
-    prior_start = prior_end - timedelta(days=length - 1)
     return PeriodSummary(
         start, end, _totals(conn, start, end), prior_start, prior_end, _totals(conn, prior_start, prior_end)
     )
 
 
-def repeat_rate(conn: Connection, start: date = DEFAULT_START, end: date = DEFAULT_END) -> dict:
-    """K07: people with >= 2 delivered orders / people with >= 1, within the period."""
-    customers, repeat = conn.execute(
-        text(
-            "SELECT COUNT(*), COALESCE(SUM(n >= 2), 0) FROM (SELECT c.customer_unique_id, COUNT(*) AS n "
-            "FROM fact_orders o JOIN dim_customer c USING (customer_id) "
-            "WHERE o.order_status = 'delivered' AND o.purchase_date BETWEEN :s AND :e GROUP BY c.customer_unique_id) x"
-        ),
-        {"s": start, "e": end},
-    ).one()
-    return {"customers": int(customers), "repeat_customers": int(repeat), "repeat_rate": _ratio(repeat, customers)}
-
-
-def concentration(conn: Connection, start: date = DEFAULT_START, end: date = DEFAULT_END) -> dict:
-    """K10 (top 10% of people) and K22 (top 10% of sellers) share of K01 in the period."""
-    params = {"s": start, "e": end}
-    by_person = [
-        Decimal(v)
-        for (v,) in conn.execute(
+def _person_totals(conn: Connection, start: date, end: date) -> list[tuple[int, Decimal]]:
+    """(delivered orders, delivered value) per person over whole months, read once for K07 and K10."""
+    return [
+        (int(n), Decimal(v))
+        for n, v in conn.execute(
             text(
-                "SELECT SUM(o.items_price_total) FROM fact_orders o JOIN dim_customer c USING (customer_id) "
-                "WHERE o.order_status = 'delivered' AND o.purchase_date BETWEEN :s AND :e "
-                "GROUP BY c.customer_unique_id"
+                "SELECT SUM(delivered_orders), SUM(delivered_merchandise_value) FROM agg_customer_month "
+                "WHERE month_start BETWEEN :s AND :e GROUP BY customer_unique_id"
             ),
-            params,
+            {"s": start.replace(day=1), "e": end},
         )
     ]
+
+
+def repeat_rate(conn: Connection, start: date = DEFAULT_START, end: date = DEFAULT_END, people=None) -> dict:
+    """K07 over whole months: people with >= 2 delivered orders / people with >= 1."""
+    people = _person_totals(conn, start, end) if people is None else people
+    repeat = sum(1 for n, _ in people if n >= 2)
+    return {"customers": len(people), "repeat_customers": repeat, "repeat_rate": _ratio(repeat, len(people))}
+
+
+def concentration(conn: Connection, start: date = DEFAULT_START, end: date = DEFAULT_END, people=None) -> dict:
+    """K10 (top 10% of people) and K22 (top 10% of sellers) share of K01 over whole months."""
+    people = _person_totals(conn, start, end) if people is None else people
     by_seller = [
         Decimal(v)
         for (v,) in conn.execute(
             text(
-                "SELECT SUM(i.price) FROM fact_order_items i JOIN fact_orders o USING (order_id) "
-                "WHERE o.order_status = 'delivered' AND o.purchase_date BETWEEN :s AND :e GROUP BY i.seller_id"
+                "SELECT SUM(delivered_merchandise_value) FROM agg_seller_month WHERE month_start BETWEEN :s AND :e "
+                "GROUP BY seller_id"
             ),
-            params,
+            {"s": start.replace(day=1), "e": end},
         )
     ]
     return {
-        "customer_top10_share": top_share(by_person),
+        "customer_top10_share": top_share([v for _, v in people]),
         "seller_top10_share": top_share(by_seller),
-        "customers": len(by_person),
+        "customers": len(people),
         "sellers": len(by_seller),
     }
+
+
+def customer_measures(conn: Connection, start: date = DEFAULT_START, end: date = DEFAULT_END) -> tuple[dict, dict]:
+    """K07 and K10/K22 from a single read of per-person totals."""
+    people = _person_totals(conn, start, end)
+    return repeat_rate(conn, start, end, people), concentration(conn, start, end, people)
 
 
 def revenue_forecast(conn: Connection, n_test: int = 6, horizon: int = 3) -> ForecastResult:

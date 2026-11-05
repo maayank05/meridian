@@ -77,3 +77,6 @@ The user wants a complete project built first and intends to learn it from the g
 - Load: `.venv\Scripts\python -m meridian.ingestion`; reconcile: `.venv\Scripts\python scripts/verify_dev_load.py`
 - KPIs: `.venv\Scripts\python scripts/reconcile_kpis.py`; forecast report: `.venv\Scripts\python scripts/forecast_report.py`
 - Before every push: verify the staged list and scan staged content (no .env, secrets, raw data, review text, record IDs, personal paths); LICENSE untouched.
+- API: `.venv\Scripts\python -m uvicorn meridian.api.main:app --port 8000` (read-only account); docs at http://127.0.0.1:8000/docs
+- Frontend (from frontend/): `npm run dev` (proxies /api to :8000), `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`, `npm run e2e`
+- Never touch other local projects' processes or ports; MERIDIAN uses 8000 (API) and 5173/5180 (frontend dev/E2E).

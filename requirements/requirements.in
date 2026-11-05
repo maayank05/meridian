@@ -5,3 +5,6 @@ PyMySQL
 pydantic-settings
 tzdata
 statsmodels
+fastapi
+uvicorn
+matplotlib

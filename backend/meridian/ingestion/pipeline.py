@@ -133,6 +133,7 @@ def run_pipeline(engine: Engine, raw_dir: Path, tz_name: str = "America/Sao_Paul
                     "Blocking data-quality checks failed: " + ", ".join(f"{c}={quality[c]}" for c in failed)
                 )
             run_sql_file(conn, TRANSFORMS / "30_marts.sql")
+            run_sql_file(conn, TRANSFORMS / "40_aggregates.sql")
             for item in loaded:
                 conn.execute(
                     text(

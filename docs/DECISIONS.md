@@ -168,3 +168,14 @@ Still open: D-011 (Phase 12).
 - **Simulator:** ROI is computed on an explicitly **synthetic contribution margin** applied to incremental revenue proxy, never on revenue (RULE-18/20). Zero cost → ROI undefined.
 - **M03 campaign scenario:** uses explicit user-entered assumptions (spend, attribution share, incremental lift, margin) instead of a seeded random spend generator. Deterministic inputs are simpler and equally clearly labelled; recorded as CR-005.
 - **Deferred:** K09 RFM (frequency is 1 for about 97% of people, R-08, so quintile RFM adds little) and K17 seller handover (low confidence). Both are documented as not implemented.
+
+## D-022 — Milestone C application choices
+- **Date / status:** 2026-11-06 / Accepted as implementation detail within approved decisions (D-004 to D-006, D-014). Listed for owner review.
+- **ESLint kept (not oxlint):** the current Vite template ships oxlint; ESLint is the approved linter (D-004), so oxlint was removed.
+- **TypeScript pinned to 6.0.3:** typescript-eslint supports TypeScript < 6.1; the template's TypeScript 7.0 would require `--force`/`--legacy-peer-deps`. Pinned to the newest supported version instead.
+- **Matplotlib** added to the lock for the executive report charts (approved stack). Seaborn is not needed.
+- **Aggregates for performance (NFR-003):** migration 0005 adds `agg_*` tables refreshed from the canonical `vw_*` views at the end of every load (same transaction); 0006 adds covering indexes. Views remain the single definition; tests assert agg = view on the fixture and on full data.
+- **Month-aligned periods:** API periods are whole months (`YYYY-MM`). The prior period has the same number of months, and a change is shown only if every prior month is a full-coverage month (RULE-22/25). Otherwise the change is "not comparable".
+- **Cohorts:** cells up to 2018-08 are observable (missing = real 0); later cells are unobservable and blank.
+- **Dev-only advisory accepted:** `npm audit` reports a moderate minimatch ReDoS inside ESLint tooling (dev dependency); production dependencies have 0 vulnerabilities. Not force-fixed (it would downgrade ESLint).
+- **E2E port 5180:** the Playwright run uses port 5180 to avoid conflicts with other local projects.

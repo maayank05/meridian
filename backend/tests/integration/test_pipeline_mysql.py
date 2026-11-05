@@ -171,7 +171,7 @@ def test_missing_file_fails_before_any_write(engine, loaded, tmp_path):
 
 
 def test_migrations_are_recorded_and_edits_detected(engine, loaded, tmp_path):
-    assert scalar(engine, "SELECT COUNT(*) FROM schema_version") == 4
+    assert scalar(engine, "SELECT COUNT(*) FROM schema_version") == 6
     assert migrate(engine) == []  # nothing pending
     for f in MIGRATIONS_DIR.glob("*.sql"):
         shutil.copy(f, tmp_path / f.name)

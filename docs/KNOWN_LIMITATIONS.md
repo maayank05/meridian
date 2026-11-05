@@ -54,6 +54,15 @@ Last updated: 2026-10-31 (Phase 0). Items marked *(expected)* come from public d
 - L-B03 MySQL `SUM()` over boolean expressions returns DECIMAL; consumers must convert counts to integers (handled in services; API in Milestone C).
 - L-B04 Simulator and campaign outputs depend entirely on user-entered synthetic assumptions (margin, uplift, lift, attribution) and are never results.
 
+## Milestone C limitations
+- L-C01 Customers endpoint takes about 1.8 s on the full data (NFR-003 target 1.5 s); other endpoints are under 0.3 s.
+- L-C02 Full load now takes about 9 minutes (aggregate refresh doubled it).
+- L-C03 Filters are period-only (whole months); no category or state filters.
+- L-C04 Executive report is HTML only (no PDF); no authentication (local, read-only data).
+- L-C05 Frontend bundle 680 kB (charts library); no code splitting.
+- L-C06 `npm audit` moderate advisory in dev-only ESLint dependency (minimatch); production dependencies clean.
+- L-C07 No automated accessibility audit has been run.
+
 ## Phase 2 tooling notes
 - Profiling ran in a throwaway scratch environment (Python 3.13.2, pandas 3.1.0, numpy 2.5.4). These versions installed and ran correctly; this is early evidence for D-002/D-003 compatibility, not the locked project environment (Phase 3).
 - The profiler scripts are committed under `scripts/profiling/` (Milestone A) with fixture tests and a reproduction guide.
