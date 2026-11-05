@@ -1,6 +1,6 @@
 # Requirements Traceability Matrix
 
-Last updated: 2026-10-31 (Phase 2)
+Last updated: 2026-11-06 (Milestone A / Phase 3)
 
 A requirement is **Complete** only when it maps to implementation, an executed test, and recorded evidence. Statuses: Not started · In progress · Complete · Partial (documented limitation) · Blocked · Deferred · Unsupported by source data.
 
@@ -15,12 +15,12 @@ A requirement is **Complete** only when it maps to implementation, an executed t
 | FR-003 | Consistent loading/empty/validation/error states | Obj 4 | Platform | — | — | — | Not started |
 | FR-004 | Documented date and dimension filters | Obj 3, 4 | Platform | — | — | — | Not started |
 | FR-005 | Show freshness, source, definition, provenance class | Obj 3, 6 | Platform | — | — | — | Not started |
-| FR-010 | Repeatable Python ingestion of local Olist files | Obj 1 | Data | — | — | — | Not started (needs dataset, Q-2) |
-| FR-011 | Validate files, columns, types, candidate keys and relationships | Obj 1, 2 | Data / M09 | Check catalogue derived from [PROFILING_REPORT](data/PROFILING_REPORT.md), [RELATIONSHIP_VALIDATION](data/RELATIONSHIP_VALIDATION.md) | — | Phase 2: keys/FKs profiled on full data and cross-verified (33/33); ingestion validation not built | In progress |
-| FR-012 | Preserve raw data, record ingestion metadata | Obj 1 | Data | — | — | — | Not started |
-| FR-013 | Ordered SQL transformations to analytical tables | Obj 2 | Data | — | — | — | Not started |
-| FR-014 | Explicit, safe rebuild/reload | Obj 1 | Data | — | — | — | Not started |
-| FR-015 | Ingestion and data-quality reports | Obj 1, 3 | Data / M09 | [DATA_QUALITY_ISSUES](data/DATA_QUALITY_ISSUES.md) (23 issues, one-off profiling) | — | Phase 2: issue register produced; automated per-run report not built | In progress |
+| FR-010 | Repeatable Python ingestion of local Olist files | Obj 1 | Data | `backend/meridian/ingestion/` (`python -m meridian.ingestion`) | test_clean_load_row_counts, test_all_fixture_files_validate | Full load run 1: 9 files / 1,550,922 rows, 271.5 s | Complete |
+| FR-011 | Validate files, columns, types, candidate keys and relationships | Obj 1, 2 | Data / M09 | `pipeline.validate_sources`, staging PKs, `quality.py` blocking checks | test_missing_file_fails*, test_renamed_column_fails, test_failed_run_rolls_back_and_is_audited | Strict headers; PK/FK enforced; 6 blocking orphan checks = 0 on full data | Complete |
+| FR-012 | Preserve raw source data and record ingestion metadata | Obj 1 | Data | `raw_*` tables, `audit_ingestion_run`, `audit_source_file` | test_raw_text_preserved_exactly | Raw text unchanged; SHA-256 per file recorded and matched (verify_dev_load 28/28) | Complete |
+| FR-013 | Ordered SQL transformations to analytical tables | Obj 2 | Data | `backend/sql/migrations/`, `backend/sql/transforms/` | test_reconciliation_raw_to_marts, test_relationships_and_flags | dim/fact marts with stated grain and FKs | Complete |
+| FR-014 | Explicit, safe rebuild/reload | Obj 1 | Data | single-transaction full refresh; production refusal in CLI | test_repeat_load_is_idempotent, test_rebuild_from_scratch_is_deterministic, test_invalid_value_fails_under_strict_mode_and_rolls_back | Checksums identical across reload/rebuild; failed runs leave prior state | Complete |
+| FR-015 | Ingestion and data-quality reports | Obj 1, 3 | Data / M09 | `audit_dq_result` (27 checks per run), CLI summary | test_quality_results_match_hand_calculation | Full-data DQ counts equal Phase 2 profile | Complete (UI view in Milestone C) |
 | FR-020 | Executive commercial KPIs | Obj 3 | M01 | — | — | — | Not started |
 | FR-021 | Customer purchase, cohort, segmentation | Obj 3 | M02 | — | — | — | Not started |
 | FR-022 | Product/category performance | Obj 3 | M04 | — | — | — | Not started |
@@ -42,15 +42,15 @@ A requirement is **Complete** only when it maps to implementation, an executed t
 | Requirement ID | Requirement | Business objective | Module | Files/API | Test ID | Evidence | Status |
 |---|---|---|---|---|---|---|---|
 | NFR-001 | Security: secrets in env/secret manager, none in Git | All | Platform | [.gitignore](../.gitignore), [SECURITY.md](SECURITY.md) | — | Phase 0: `.env` ignore rules created; not yet tested by a secret scan | In progress |
-| NFR-002 | Reliability: failure modes, transactions, retries | Obj 1 | Platform | — | — | — | Not started |
+| NFR-002 | Reliability: failure modes, transactions, retries | Obj 1 | Platform | single-transaction pipeline; audited failures | test_failed_run_rolls_back_and_is_audited | Rollback verified | In progress (API in Milestone C) |
 | NFR-003 | Performance: pagination, aggregate in MySQL | Obj 4 | Platform | — | — | — | Not started |
 | NFR-004 | Maintainability: layered backend, modular React | All | Platform | [PROJECT_SPEC.md §3](PROJECT_SPEC.md) | — | Design only | Not started |
 | NFR-005 | Testability: unit/integration/API/SQL/frontend/E2E | All | Platform | [TEST_STRATEGY.md](TEST_STRATEGY.md) | — | Strategy only | Not started |
 | NFR-006 | Accessibility | Obj 4 | Frontend | — | — | — | Not started |
 | NFR-007 | Observability: structured, non-sensitive logs | Obj 4 | Platform | — | — | — | Not started |
-| NFR-008 | Reproducibility: pinned deps, deterministic fixtures | Obj 1 | Platform | — | — | — | Not started |
+| NFR-008 | Reproducibility: pinned deps, deterministic fixtures | Obj 1 | Platform | `requirements/*.txt` (hashed), fixture generator | test_rebuild_from_scratch_is_deterministic | `--require-hashes` install OK; Phase 2 reports regenerated byte-identical | Complete |
 | NFR-009 | Portability: local setup + Render deploy docs | Obj 8 | Docs | — | — | — | Not started |
-| NFR-010 | Data integrity: constraints, RI, reconciliation | Obj 2 | Data | [RELATIONSHIP_VALIDATION](data/RELATIONSHIP_VALIDATION.md) | — | Phase 2: source RI measured (0 transactional orphans); MySQL constraints not built | In progress |
+| NFR-010 | Data integrity: constraints, RI, reconciliation | Obj 2 | Data | PK/FK/CHECK constraints; `scripts/verify_dev_load.py` | test_relationships_and_flags, test_reconciliation_raw_to_marts | 28/28 reconciliation on full data | Complete |
 
 ## Module acceptance criteria (from `instructions/05`)
 

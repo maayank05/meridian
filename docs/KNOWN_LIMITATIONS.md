@@ -31,6 +31,7 @@ Last updated: 2026-10-31 (Phase 0). Items marked *(expected)* come from public d
 - L-T03 Default `python` on PATH is 3.11 without pip; project must use `py -3.13` (D-002).
 - L-T04 `gh` CLI not installed. Remote is https://github.com/maayank05/meridian (public); pushes use plain `git` over HTTPS with the user's own Git credential manager. Claude cannot verify GitHub Actions runs without `gh` or the web UI.
 - L-T05 Render has no native managed MySQL; production DB provider and cost undecided (D-011, Q-6).
+- L-T07 Source timezone is inferred as America/Sao_Paulo (D-017). 39 ambiguous DST fall-back timestamps have no UTC value and are excluded from duration KPIs.
 - L-T06 Machine has 7.7 GB RAM; large files (geolocation) must be ingested in chunks.
 
 ## Power BI connectivity limitations
@@ -40,9 +41,16 @@ Last updated: 2026-10-31 (Phase 0). Items marked *(expected)* come from public d
 ## Deferred features
 - None deferred yet.
 
+## Milestone A limitations
+- L-A02 Full refresh only (no incremental loads); a full run takes about 4.5 minutes on this machine.
+- L-A03 Local MySQL TLS certificates are not verified (D-020); acceptable only for a local server.
+- L-A04 Geolocation is reduced to one mean coordinate per zip prefix inside the Brazil bounding box (duplicates included in the mean).
+- L-A05 85 `review_creation_date` values carry a non-midnight time but are stored as DATE (D-017 T6); counted in the DQ results.
+- L-A06 Repeat-load idempotency and rebuild determinism are proven on the fixture; the full dataset was loaded once.
+
 ## Phase 2 tooling notes
 - Profiling ran in a throwaway scratch environment (Python 3.13.2, pandas 3.1.0, numpy 2.5.4). These versions installed and ran correctly; this is early evidence for D-002/D-003 compatibility, not the locked project environment (Phase 3).
-- The profiler scripts are not yet committed (no application code in Phase 2). Proposed: commit them under `scripts/profiling/` in Phase 3 together with Pytest coverage.
+- The profiler scripts are committed under `scripts/profiling/` (Milestone A) with fixture tests and a reproduction guide.
 
 ## Known defects
 - None (no code exists).

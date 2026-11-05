@@ -1,0 +1,5 @@
+# Development/test dependencies
+-c requirements.txt
+pytest
+ruff
+pip-tools

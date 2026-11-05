@@ -1,0 +1,2 @@
+# Test fixtures must keep exact bytes (CRLF line endings and UTF-8 BOM are deliberate edge cases).
+backend/tests/fixtures/**/*.csv -text

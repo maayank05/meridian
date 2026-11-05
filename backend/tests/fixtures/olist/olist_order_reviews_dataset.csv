@@ -1,0 +1,6 @@
+review_id,order_id,review_score,review_comment_title,review_comment_message,review_creation_date,review_answer_timestamp
+0c508dc5b8cd9ab6bc3d4f4b442a50c6,6e7f85a9d0fe9b5dfb504c6f2991d744,5,,"Ótimo produto,
+chegou rápido",2017-03-21 00:00:00,2017-03-22 10:00:00
+78f6475b22de06cfce466b39e2596a9e,18899d7d59a5ab5aa0dff9fca8604ece,4,,,2018-02-26 00:00:00,2018-02-27 08:00:00
+78f6475b22de06cfce466b39e2596a9e,9bf8c4be8b3fc15c4623226aa6e2318e,4,,,2018-02-26 00:00:00,2018-02-27 08:00:00
+64aa842d347ac7896332ffa81d7937ec,001469a0ffeadb85e6f0c13bb37bd148,1,Atraso,Não recebi,2018-09-16 00:00:00,2018-09-17 11:00:00

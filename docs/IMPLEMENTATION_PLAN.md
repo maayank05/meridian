@@ -87,3 +87,10 @@ Exact commands are confirmed when each tool is configured; this table is updated
 ## Phase 13 — Portfolio and learning package
 - README with real screenshots, diagrams, demo script, `learning/` curriculum (17 sections per `13`), interview guide.
 - **Gate:** clean-clone reproducibility run; honest completion audit of all requirements.
+
+## Lean completion (approved 2026-11-06, D-020)
+Remaining phases are delivered as four milestones with one checkpoint each:
+- **A** Phase 3: data pipeline. **Done**, see [PHASE_03_CHECKPOINT](checkpoints/PHASE_03_CHECKPOINT.md).
+- **B** Phases 4–7: core SQL analytics, Python services, one forecast vs baseline, compact decision simulator.
+- **C** Phases 8, 9, 11: FastAPI, React (about 5 pages), concise executive report.
+- **D** Phases 12–13: CI, README, short learning guide, clean-clone check. Power BI = spec + DAX (owner builds PBIX); paid hosting deferred.

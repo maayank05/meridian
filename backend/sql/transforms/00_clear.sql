@@ -1,0 +1,29 @@
+-- Full-refresh clear, in foreign-key-safe order. Runs inside the pipeline transaction (DELETE, not TRUNCATE,
+-- so a failed run rolls back to the previous state). Audit tables are never cleared.
+DELETE FROM fact_reviews;
+DELETE FROM fact_payments;
+DELETE FROM fact_order_items;
+DELETE FROM fact_orders;
+DELETE FROM dim_customer;
+DELETE FROM dim_product;
+DELETE FROM dim_seller;
+DELETE FROM dim_date;
+DELETE FROM stg_tz_map;
+DELETE FROM stg_customers;
+DELETE FROM stg_geolocation_zip;
+DELETE FROM stg_orders;
+DELETE FROM stg_order_items;
+DELETE FROM stg_order_payments;
+DELETE FROM stg_order_reviews;
+DELETE FROM stg_products;
+DELETE FROM stg_sellers;
+DELETE FROM stg_category_translation;
+DELETE FROM raw_customers;
+DELETE FROM raw_geolocation;
+DELETE FROM raw_order_items;
+DELETE FROM raw_order_payments;
+DELETE FROM raw_order_reviews;
+DELETE FROM raw_orders;
+DELETE FROM raw_products;
+DELETE FROM raw_sellers;
+DELETE FROM raw_category_translation;

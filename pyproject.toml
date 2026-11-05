@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "meridian"
+version = "0.3.0"
+description = "MERIDIAN — Business Intelligence & Decision Intelligence Platform (simulated Northstar Commerce)"
+requires-python = ">=3.13"
+license = "MIT"
+
+[tool.setuptools.packages.find]
+where = ["backend"]
+exclude = ["tests*"]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests", "scripts/profiling/tests"]
+pythonpath = ["backend"]
+markers = ["mysql: requires the local meridian_test MySQL database (credentials from .env)"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+extend-exclude = [".venv", "data"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "PL"]
+ignore = [
+    "PLR2004",  # magic values are expected in tests and data checks
+    "PLR0913",  # explicit function arguments are clearer than config objects here
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests use assert; SQL in tests/checks is built from fixed identifiers, never from user input.
+"**/tests/**" = ["S101", "S608"]
+"backend/meridian/ingestion/quality.py" = ["S608"]   # table/column names come from a fixed internal tuple
+"backend/meridian/ingestion/pipeline.py" = ["S608"]  # table/column names come from the fixed SOURCES spec
+"scripts/profiling/*.py" = ["PLR0915", "PLR0911", "PLR0912", "E501", "S603"]  # Phase 2 profiling scripts (verified outputs)
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ruff.lint.isort]
+known-first-party = ["meridian", "tests"]

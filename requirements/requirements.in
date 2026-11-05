@@ -1,0 +1,6 @@
+# Runtime dependencies (approved: D-001, D-006, D-017)
+pandas
+SQLAlchemy
+PyMySQL
+pydantic-settings
+tzdata

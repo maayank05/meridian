@@ -1,0 +1,5 @@
+product_id,product_category_name,product_name_lenght,product_description_lenght,product_photos_qty,product_weight_g,product_length_cm,product_height_cm,product_width_cm
+42f1e2fa04bc46d2bd22d11514db6623,beleza_saude,40,300,2,500,20,10,15
+07be84452cc657aabb55b10dfd13c8ff,pc_gamer,35,250,1,2000,40,20,30
+fb6b355a2ee269a262256d8ef6f0de10,,,,,300,16,10,11
+2731e44f51d620a4957d26a99aa11492,utilidades_domesticas,30,120,3,0,10,5,8

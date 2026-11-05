@@ -69,3 +69,10 @@ The user wants a complete project built first and intends to learn it from the g
 - MySQL 8.0.38 runs as Windows service `MySQL80` on 3306; client binary is `C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe` (not on PATH).
 - No Docker/WSL. Node 24 + npm 11 available.
 - Olist CSVs go in `data/raw/olist/` (gitignored). Never ask for or handle DB credentials in chat; they live in local `.env`.
+
+## Commands (Milestone A)
+- Setup: `py -3.13 -m venv .venv`; `.venv\Scripts\python -m pip install --require-hashes -r requirements/requirements.txt -r requirements/requirements-dev.txt`; `.venv\Scripts\python -m pip install --no-deps --no-build-isolation -e .`
+- Lint: `.venv\Scripts\ruff check .` and `.venv\Scripts\ruff format --check .`
+- Tests: `.venv\Scripts\python -m pytest` (MySQL tests use meridian_test only)
+- Load: `.venv\Scripts\python -m meridian.ingestion`; reconcile: `.venv\Scripts\python scripts/verify_dev_load.py`
+- Before every push: verify the staged list and scan staged content (no .env, secrets, raw data, review text, record IDs, personal paths); LICENSE untouched.
