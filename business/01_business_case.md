@@ -53,4 +53,4 @@ MERIDIAN creates one governed analytical foundation and decision-support layer:
 | SM-09 | Simulated assumptions are visibly labelled | UI/API provenance tests (Phases 8–9) |
 
 ## 6. Constraints
-Approved stack only (D-001). Olist data cannot be redistributed in the repo (D-013). The project is built and run by a single project owner with Claude Code; budget for hosting is still open (Q-6).
+Approved stack only (D-001). Olist data cannot be redistributed in the repo (D-013). The project is built and run by a single project owner using an AI coding agent; budget for hosting is still open (Q-6).

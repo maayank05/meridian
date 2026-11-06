@@ -1,6 +1,6 @@
 # Phase 3 Preparation: Timestamp Handling (D-017) and Local MySQL Setup (Q-5)
 
-Status: **Approved for the project owner to execute, 2026-10-31.** Claude does **not** execute any of the setup SQL or change the MySQL server. Phase 3 migrations and ingestion start only after the owner runs §B and Claude verifies the reported permissions.
+Status: **Approved for the project owner to execute, 2026-10-31.** The AI assistant does **not** execute any of the setup SQL or change the MySQL server. Phase 3 migrations and ingestion start only after the owner runs §B and the reported permissions are verified.
 
 ---
 
@@ -46,7 +46,7 @@ Status: **Approved for the project owner to execute, 2026-10-31.** Claude does *
 
 ### B2. Password-handling rules
 - Passwords exist **only** in your local `.env`, which is gitignored (verified by the setup script before it runs).
-- They are never typed on a command line (which would land in PowerShell history), never shown in the terminal, and never sent to Claude.
+- They are never typed on a command line (which would land in PowerShell history), never shown in the terminal, and never sent to the AI assistant.
 - The setup script reads them from `.env` into memory and pipes the SQL into `mysql.exe`. MySQL error messages do not echo statement text.
 - The root password is typed only at MySQL's own hidden prompt.
 
@@ -129,7 +129,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES, CR
 ```
 `CREATE USER` (without `IF NOT EXISTS`) is deliberate: if an account already exists, the script fails loudly rather than silently keeping an old password.
 
-*Fallback if MySQL's password prompt does not appear when input is piped* (it should on Windows, but this pipe-plus-prompt combination has not been tested on your machine): stop, and tell Claude. An alternative that also avoids displaying passwords will be provided. Do not switch to typing passwords on the command line.
+*Fallback if MySQL's password prompt does not appear when input is piped* (it should on Windows, but this pipe-plus-prompt combination has not been tested on your machine): stop and report it. An alternative that also avoids displaying passwords will be provided. Do not switch to typing passwords on the command line.
 
 **Step 5 — Verify** (each command prompts for a password, hidden).
 
@@ -159,7 +159,7 @@ If a login fails with `Access denied for user 'meridian_…'@'127.0.0.1'`, the s
 & $mysql -u meridian_owner  -p -h localhost --protocol=TCP meridian_test -e "SELECT 1;"                            # expect ERROR 1044
 ```
 
-**Step 6 — Send Claude:** the output of 5a and 5b, and the three error codes from 5c. None of these contain passwords. Do **not** send `.env` or any password.
+**Step 6 — Report back:** the output of 5a and 5b, and the three error codes from 5c. None of these contain passwords. Do **not** send `.env` or any password.
 
 ### B4. Rollback (destructive; undoes everything in Step 4)
 Run as root only if you need to start over:

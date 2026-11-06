@@ -28,7 +28,7 @@ Exact commands are confirmed when each tool is configured; this table is updated
 
 ## Phase 0 — Repository and environment audit
 - **Objective:** understand requirements, environment, constraints; create control documents only.
-- **Deliverables:** `docs/*` control docs, `.gitignore`, updated `CLAUDE.md`, `docs/checkpoints/PHASE_00_CHECKPOINT.md`.
+- **Deliverables:** `docs/*` control docs, `.gitignore`, project rules file (now `CONTRIBUTING.md`), `docs/checkpoints/PHASE_00_CHECKPOINT.md`.
 - **Acceptance:** all 11 mandated control docs exist; every FR/NFR from `02` appears in traceability; environment facts recorded from executed commands; contradictions and decisions logged; no application code.
 
 ## Phase 1 — Business analysis and specification
@@ -73,7 +73,7 @@ Exact commands are confirmed when each tool is configured; this table is updated
 
 ## Phase 10 — Power BI
 - Semantic model spec, DAX measures, report page spec, connection/refresh notes, reconciliation checklist.
-- PBIX authored by the user in Power BI Desktop (installed, v2.159.883.0) following the spec — Claude cannot operate the GUI (D-012).
+- PBIX authored by the user in Power BI Desktop (installed, v2.159.883.0) following the spec — the GUI cannot be automated here (D-012).
 - **Gate:** reconciliation of PBIX totals vs API for identical filters, or explicitly documented as "requires Desktop authoring".
 
 ## Phase 11 — Reporting and governance

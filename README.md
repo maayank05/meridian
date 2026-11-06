@@ -2,6 +2,8 @@
 
 MERIDIAN is an end-to-end analytics product for **Northstar Commerce**, a *simulated* online retailer. Its sales, customers, products, sellers, payments, reviews and deliveries come from the public **Olist Brazilian e-commerce dataset** (about 100k orders, 2016–2018). It turns raw CSV files into a tested MySQL model, reconciled KPIs, an honest forecast, a decision simulator, a FastAPI backend, a React dashboard and an HTML executive report.
 
+**How this was built.** Built by Mayank Pugalia using Claude Code (an AI coding agent) under a phased, test-gated process. I defined the requirements, quality rules and business decisions and approved every phase; Claude wrote the code and documentation. Every number is verified by automated tests and reconciliation checks.
+
 ![Overview](docs/screenshots/overview.png)
 
 ## Business problem

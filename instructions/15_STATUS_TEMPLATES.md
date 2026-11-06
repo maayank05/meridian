@@ -1,6 +1,6 @@
 # 15 — Project Status and Reporting Templates
 
-Claude must maintain these living documents in `docs/`.
+These living documents are maintained in `docs/`.
 
 ## PROJECT_STATUS.md
 ```md

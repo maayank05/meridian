@@ -11,7 +11,7 @@ Understand the full requirement pack, audit the repository and local environment
 - Inspected repository: contained only the instruction pack (19 files, ~56 KB); no code, no data; not a Git repository.
 - Ran environment audit (below).
 - Initialised a local Git repo (branch `main`, **no commits**, no remote).
-- Created `.gitignore` and the 10 mandated `docs/` control files; appended user rules and environment notes to `CLAUDE.md`.
+- Created `.gitignore` and the 10 mandated `docs/` control files; appended owner rules and environment notes to the project rules file (now `CONTRIBUTING.md`).
 - Ran a document-consistency check script (20 checks).
 
 ## 3. Environment audit (from executed commands)
@@ -42,13 +42,13 @@ Stack confirmed and locked (D-001): Python, MySQL, Pandas, SQL scripts, FastAPI,
 | 4 | Several required capabilities need libraries not on the stack list (pooling, ASGI server, React build/test/chart/E2E) | Listed in PROJECT_SPEC §2.1 as **Proposed, not installed**, awaiting your approval (Q-1) |
 | 5 | `docker-compose.yml` suggested, Docker unavailable | Use native MySQL80 service; Linux parity via GitHub Actions (D-010) |
 | 6 | Render has no native managed MySQL | Provider choice deferred to Phase 12 with live pricing verification (D-011) |
-| 7 | "Genuine PBIX only if authoring/testing possible" | Desktop exists, but Claude can't drive the GUI → user authors from Claude's spec; Claude reconciles (D-012) |
+| 7 | "Genuine PBIX only if authoring/testing possible" | Desktop exists, but the GUI can't be automated → owner authors the PBIX from the spec; totals are reconciled against generated targets (D-012) |
 | 8 | M03 marketing data does not exist in Olist | Your decision needed (D-015 / Q-3) |
 | 9 | Raw `schemas` vs `prefixes` left open by `04` | One DB per environment + table prefixes (D-009) |
 
 ## 5. Files created/modified
 Created: `.gitignore`, `docs/PROJECT_SPEC.md`, `docs/IMPLEMENTATION_PLAN.md`, `docs/PROJECT_STATUS.md`, `docs/REQUIREMENTS_TRACEABILITY.md`, `docs/DECISIONS.md`, `docs/KNOWN_LIMITATIONS.md`, `docs/QUALITY_REPORT.md`, `docs/DEPLOYMENT_RUNBOOK.md`, `docs/SECURITY.md`, `docs/TEST_STRATEGY.md`, `docs/checkpoints/PHASE_00_CHECKPOINT.md`, `.git/` (init).
-Modified: `CLAUDE.md` (appended sections only; original content unchanged).
+Modified: the project rules file, now `CONTRIBUTING.md` (appended sections only; original content unchanged).
 Not modified: all other pack files.
 
 ## 6. Commands actually executed

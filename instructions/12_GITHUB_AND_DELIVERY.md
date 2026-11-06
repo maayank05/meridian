@@ -3,8 +3,7 @@
 ## Suggested repository layout
 ```text
 meridian/
-├── CLAUDE.md
-├── MASTER_BUILD_PROMPT.md
+├── CONTRIBUTING.md
 ├── README.md
 ├── pyproject.toml
 ├── .env.example

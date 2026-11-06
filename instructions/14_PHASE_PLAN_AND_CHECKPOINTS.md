@@ -1,6 +1,6 @@
 # 14 — Phase Plan and Mandatory Checkpoints
 
-Claude must complete phases in order. Each phase ends with a report and a pause for approval unless the user explicitly authorizes autonomous continuation.
+Phases are completed in order. Each phase ends with a report and a pause for approval unless the user explicitly authorizes autonomous continuation.
 
 ## Phase 0 — Repository and environment audit
 - Inspect repository, Git status and existing code.

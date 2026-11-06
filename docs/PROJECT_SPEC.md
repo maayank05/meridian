@@ -1,6 +1,6 @@
 # MERIDIAN — Project Specification
 
-Status: **Draft v0.1 (Phase 0)**. This document is the authoritative implementation spec once approved. It consolidates `MASTER_BUILD_PROMPT.md`, `CLAUDE.md` and `instructions/01`–`15`. Where those sources conflict, the resolution is recorded in [DECISIONS.md](DECISIONS.md).
+Status: **Draft v0.1 (Phase 0)**. This document is the authoritative implementation spec once approved. It consolidates the original project brief, the engineering rules (now [CONTRIBUTING.md](../CONTRIBUTING.md)) and `instructions/01`–`15`. Where those sources conflict, the resolution is recorded in [DECISIONS.md](DECISIONS.md).
 
 Last updated: 2026-10-31
 
@@ -148,7 +148,7 @@ CI and unit tests use small, deterministic, hand-built fixtures that mimic the o
 | Q-2 | Please download the Olist dataset from Kaggle and place the CSVs in `data/raw/olist/`. | **Resolved 2026-10-31:** 9 CSVs present; headers verified |
 | Q-3 | M03 Marketing: build a clearly-labelled synthetic campaign scenario model, or limit M03 to an explicit "not supported by source data" statement plus methodology? | **Resolved 2026-10-31:** both (D-015) |
 | Q-4 | Create a GitHub repository (name `meridian`?) and confirm whether it should be public. `gh` CLI is not installed. | **Resolved 2026-10-31:** public, https://github.com/maayank05/meridian |
-| Q-5 | Local MySQL: you will need to create `meridian_dev` / `meridian_test` databases and a non-root app user, and put credentials in a local `.env` (never in chat). Instructions will be provided in Phase 3. | **Guide approved 2026-10-31** ([PHASE3_PREPARATION](setup/PHASE3_PREPARATION.md)); awaiting owner execution and Claude verification |
+| Q-5 | Local MySQL: you will need to create `meridian_dev` / `meridian_test` databases and a non-root app user, and put credentials in a local `.env` (never in chat). Instructions will be provided in Phase 3. | **Guide approved 2026-10-31** ([PHASE3_PREPARATION](setup/PHASE3_PREPARATION.md)); awaiting owner execution and verification |
 | Q-7 | Approve the canonical revenue definition (D-016) | **Resolved 2026-10-31:** Option A, "Delivered Merchandise Value (Revenue Proxy)" |
 | Q-8 | Approve the default analysis window (D-018) | **Resolved 2026-10-31:** 2017-01-01 to 2018-08-31 |
 | Q-9 | Approve KPI refinements K12/K13/K17/K20 (D-019) | **Resolved 2026-10-31:** approved with conditions; K26 added |

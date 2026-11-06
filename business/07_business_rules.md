@@ -13,7 +13,7 @@ Column references are `alias.column` from [SOURCE_HEADERS](../docs/data/SOURCE_H
 | RULE-05 | Payment grain: one row per (`order_payments.order_id`, `order_payments.payment_sequential`) | fact_payments | Expected | **Verified Phase 2**: key unique; 80 orders have sequence gaps (DQ-18) |
 | RULE-06 | Items and payments are **never** joined row-to-row for summed metrics. Each is aggregated to order level first | K18, all revenue joins | Fan-out prevention (`04`) | Phase 4 tests |
 | RULE-07 | All monetary values are BRL; no FX conversion is performed | All money KPIs | A-01 (no currency column, H-04) | — (assumption) |
-| RULE-08 | Money is stored as DECIMAL and rounded only for display (2 dp, half-up) | All money KPIs | `CLAUDE.md` | Phase 3 |
+| RULE-08 | Money is stored as DECIMAL and rounded only for display (2 dp, half-up) | All money KPIs | `CONTRIBUTING.md` | Phase 3 |
 | RULE-09 | Source timestamps carry no timezone. They are stored as recorded (source-local) and labelled as such; pipeline metadata timestamps are UTC | All time KPIs | A-02, H-07 | Decision in Phase 3 (D-017 to be raised) |
 | RULE-10 | Default time basis for commercial KPIs is `orders.order_purchase_timestamp`. Other bases (approval, carrier, delivery) are used only where named | K01–K13 | Demand-timing convention | — |
 | RULE-11 | Delivery-metric eligible population: `order_status` = delivered **and** `order_delivered_customer_date` present. Excluded orders are counted in an exclusion report, never silently dropped | K14–K16 | `05` M05 | **Verified Phase 2**: eligible = 96,470; 8 delivered orders excluded (no date) |

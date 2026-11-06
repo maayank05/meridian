@@ -7,7 +7,7 @@ The user approved:
 - **D-002 to D-010 → Accepted**, *subject to dependency compatibility verification*. That means each library version must install and pass an import/smoke check on Python 3.13 (local Windows) and in CI (Linux) before it is locked. A failure gets a new decision entry, and nothing is silently swapped.
 - The proposed Python / React / MySQL / FastAPI / testing architecture (PROJECT_SPEC §2.1, §3), which covers the supporting libraries that D-004 to D-006 name, including Recharts (D-005).
 - **D-015 → Accepted: option A + B** (synthetic campaign scenario model plus methodology/limitations documentation).
-- Dataset: the user downloads manually into `data/raw/olist/`. Claude must not use or request Kaggle credentials (reinforces D-013).
+- Dataset: the user downloads manually into `data/raw/olist/`. The AI assistant must not use or request Kaggle credentials (reinforces D-013).
 - GitHub repository: **public**, https://github.com/maayank05/meridian. The remote already holds an MIT `LICENSE` that must be preserved.
 
 Second approval (2026-10-31): **D-012, D-013, D-014 → Accepted.** D-013 updated with user-confirmed licence wording.
@@ -87,14 +87,14 @@ Still open: D-011 (Phase 12).
 
 ## D-012 — Power BI authoring
 - **Date / status:** 2026-10-31 / Accepted (user approval)
-- **Context:** Power BI Desktop is installed (`Microsoft.MicrosoftPowerBIDesktop` 2.159.883.0). Claude cannot operate its GUI or verify a PBIX visually.
-- **Decision (proposed):** Claude delivers model spec, DAX measures, page spec, connection steps and an automated reconciliation script (MySQL/API side). The user authors the PBIX in Desktop against local MySQL and captures screenshots; Claude then reconciles the reported totals. No PBIX is created by Claude (no fake/empty PBIX).
+- **Context:** Power BI Desktop is installed (`Microsoft.MicrosoftPowerBIDesktop` 2.159.883.0). Its GUI cannot be automated or a PBIX verified visually in this setup.
+- **Decision (proposed):** The project delivers model spec, DAX measures, page spec, connection steps and an automated reconciliation script (MySQL/API side). The user authors the PBIX in Desktop against local MySQL and captures screenshots; the reported totals are then reconciled against generated targets. No PBIX is generated automatically (no fake/empty PBIX).
 - **Risk:** Power BI Desktop's MySQL connector may require the MySQL Connector/NET driver — verify at Phase 10. Power BI Service refresh from a cloud MySQL generally needs a gateway or public endpoint — document, never expose production DB publicly.
 
 ## D-013 — Dataset acquisition and redistribution
 - **Date / status:** 2026-10-31 / Accepted (user approval)
 - **Context:** No Kaggle credentials (`~/.kaggle/kaggle.json` absent); no Olist CSVs found on Desktop/Downloads. **Licence: CC BY-NC-SA 4.0 — verified by the project owner on 2026-10-31** (attribution required; non-commercial use only; adaptations shared under the same licence). The user has since placed all 9 CSVs in `data/raw/olist/` manually.
-- **Decision:** Manual download by the user to `data/raw/olist/`. Claude never uses or requests Kaggle credentials. The folder is gitignored and raw data is never committed. Tests/CI use hand-built synthetic fixtures labelled as such. Attribution and licence recorded in README and data docs.
+- **Decision:** Manual download by the user to `data/raw/olist/`. Kaggle credentials are never used or requested by the AI assistant. The folder is gitignored and raw data is never committed. Tests/CI use hand-built synthetic fixtures labelled as such. Attribution and licence recorded in README and data docs.
 - **Public-repo consequence (2026-10-31):** The repository is public with an MIT `LICENSE`. **The MIT licence applies only to MERIDIAN's original code and documentation, not to the Olist dataset**, which stays under CC BY-NC-SA 4.0. The README must say so and give the Olist attribution. A pre-commit staging check must confirm that no `olist_*.csv` / `product_category_name_translation.csv` file is ever staged.
 
 ## D-014 — End-to-end testing: Playwright
