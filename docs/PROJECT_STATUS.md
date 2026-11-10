@@ -30,7 +30,7 @@ Overall status: RELEASED (local execution; no hosted deployment)
 
 ## Remaining manual steps for the owner
 - Build the Power BI report in Power BI Desktop ([powerbi/README.md](../powerbi/README.md)) and reconcile it with the targets.
-- Hosted demo: static snapshot on Vercel (D-024). The Vercel project is created by the owner, root directory `frontend`.
+- Hosted demo: static snapshot on Vercel (D-024), live at https://mayankpugalia-meridian.vercel.app (verified 2026-11-11: all pages, presets and reports load, no API calls).
 
 ## Latest checkpoint
 Milestone D / Phases 12–13: PASS WITH DOCUMENTED LIMITATIONS ([checkpoint](checkpoints/PHASE_13_CHECKPOINT.md))

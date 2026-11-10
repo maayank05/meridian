@@ -4,6 +4,8 @@ MERIDIAN is an end-to-end analytics product for **Northstar Commerce**, a *simul
 
 **How this was built.** Built by Mayank Pugalia using Claude Code (an AI coding agent) under a phased, test-gated process. I defined the requirements, quality rules and business decisions and approved every phase; Claude wrote the code and documentation. Every number is verified by automated tests and reconciliation checks.
 
+**Live demo:** [mayankpugalia-meridian.vercel.app](https://mayankpugalia-meridian.vercel.app). A static snapshot of the local API: every period works, and the Decision Simulator offers three preset scenarios (D-024).
+
 ![Overview](docs/screenshots/overview.png)
 
 ## Business problem
