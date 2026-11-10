@@ -138,3 +138,15 @@ export interface Campaign {
 export interface ApiErrorBody {
   error: { code: string; message: string; request_id: string | null; details?: { field: string; message: string }[] };
 }
+
+// Static demo snapshot (D-024). Preset values are synthetic assumptions, kept as strings exactly as exported.
+export type PresetId = "cautious" | "base" | "optimistic";
+
+export interface Manifest {
+  generated_utc: string;
+  source_commit: string;
+  months: string[];
+  periods: number;
+  presets: { id: PresetId; label: string; scenario: Record<string, string | number>; campaign: Record<string, string | number> }[];
+  non_200: Record<string, number>;
+}

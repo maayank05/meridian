@@ -1,9 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { api, ApiError, type Period } from "../services/api";
-import { Card, ErrorState, ProvenanceBadge } from "../components/ui";
+import { api, ApiError, STATIC_SNAPSHOT, type Period } from "../services/api";
+import { useApi } from "../features/useApi";
+import { AsyncSection, Card, ErrorState, ProvenanceBadge } from "../components/ui";
 import { formatBRL, formatCompactBRL, formatPct } from "../lib/format";
-import type { Campaign, Simulation } from "../types/api";
+import type { Campaign, Manifest, PresetId, Simulation } from "../types/api";
 
 type Status<T> = { kind: "idle" } | { kind: "loading" } | { kind: "error"; error: ApiError } | { kind: "done"; data: T };
 
@@ -158,20 +159,107 @@ function CampaignForm() {
         </button>
       </form>
       {status.kind === "error" && <ErrorState error={status.error} onRetry={() => setStatus({ kind: "idle" })} />}
-      {status.kind === "done" && (
-        <div className="result" aria-live="polite">
-          <div className="grid-3">
-            <div className="stat"><span className="stat-label">Scenario CAC</span><span className="stat-value">{formatBRL(status.data.scenario_cac)}</span></div>
-            <div className="stat"><span className="stat-label">Attributed ROAS</span><span className="stat-value">{status.data.attributed_roas.toFixed(2)}×</span></div>
-            <div className="stat"><span className="stat-label">Incremental ROAS</span><span className="stat-value">{status.data.incremental_roas.toFixed(2)}×</span></div>
-          </div>
-          <p>
-            Net benefit: <strong className={status.data.net_benefit < 0 ? "neg" : "pos"}>{formatBRL(status.data.net_benefit)}</strong>. Attributed ROAS is usually
-            higher than incremental ROAS because attribution credits sales that may have happened anyway.
-          </p>
-        </div>
-      )}
+      {status.kind === "done" && <CampaignResult data={status.data} />}
     </Card>
+  );
+}
+
+function CampaignResult({ data }: { data: Campaign }) {
+  return (
+    <div className="result" aria-live="polite">
+      <div className="grid-3">
+        <div className="stat"><span className="stat-label">Scenario CAC</span><span className="stat-value">{formatBRL(data.scenario_cac)}</span></div>
+        <div className="stat"><span className="stat-label">Attributed ROAS</span><span className="stat-value">{data.attributed_roas.toFixed(2)}×</span></div>
+        <div className="stat"><span className="stat-label">Incremental ROAS</span><span className="stat-value">{data.incremental_roas.toFixed(2)}×</span></div>
+      </div>
+      <p>
+        Net benefit: <strong className={data.net_benefit < 0 ? "neg" : "pos"}>{formatBRL(data.net_benefit)}</strong>. Attributed ROAS is usually
+        higher than incremental ROAS because attribution credits sales that may have happened anyway.
+      </p>
+    </div>
+  );
+}
+
+// ---- Static demo (D-024): pre-computed results for named synthetic presets; no calculation happens here. ----
+
+const SCENARIO_LABELS: Record<string, string> = {
+  intervention_cost: "Intervention cost (BRL)", contribution_margin: "Contribution margin (0–1)", horizon_months: "Horizon (months)",
+  downside_uplift: "Downside uplift", base_uplift: "Base uplift", upside_uplift: "Upside uplift",
+};
+const CAMPAIGN_LABELS: Record<string, string> = {
+  synthetic_spend: "Synthetic spend (BRL)", baseline_new_customers: "Baseline new customers", baseline_revenue_proxy: "Baseline revenue proxy (BRL)",
+  attributed_share: "Attributed share (0–1)", incremental_lift: "Incremental lift (0–1)", contribution_margin: "Contribution margin (0–1)",
+};
+
+function PresetSwitch({ manifest, value, onChange, label }: { manifest: Manifest; value: PresetId; onChange: (p: PresetId) => void; label: string }) {
+  return (
+    <div className="preset-switch" role="radiogroup" aria-label={label}>
+      {manifest.presets.map((p) => (
+        <button key={p.id} type="button" role="radio" aria-checked={p.id === value} className={p.id === value ? "button" : "button ghost"} onClick={() => onChange(p.id)}>
+          {p.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function Assumptions({ values, labels }: { values: Record<string, string | number>; labels: Record<string, string> }) {
+  return (
+    <dl className="assumptions">
+      {Object.keys(labels).map((k) => (
+        <div key={k}>
+          <dt>{labels[k]}</dt>
+          <dd>{String(values[k])}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function StaticScenario({ period, manifest }: { period: Period; manifest: Manifest }) {
+  const [preset, setPreset] = useState<PresetId>("base");
+  const state = useApi(() => api.simulatePreset(preset, period), `sim:${preset}:${period.start}:${period.end}`);
+  const values = manifest.presets.find((p) => p.id === preset)?.scenario ?? {};
+  return (
+    <Card title="Intervention scenario" provenance="scenario_output">
+      <PresetSwitch manifest={manifest} value={preset} onChange={setPreset} label="Scenario assumptions" />
+      <Assumptions values={values} labels={SCENARIO_LABELS} />
+      <AsyncSection state={state}>{(data) => <ScenarioResult data={data} />}</AsyncSection>
+    </Card>
+  );
+}
+
+function StaticCampaign({ manifest }: { manifest: Manifest }) {
+  const [preset, setPreset] = useState<PresetId>("base");
+  const state = useApi(() => api.campaignPreset(preset), `campaign:${preset}`);
+  const values = manifest.presets.find((p) => p.id === preset)?.campaign ?? {};
+  return (
+    <Card title="Marketing campaign scenario (synthetic)" provenance="synthetic_assumption">
+      <p className="note">No observed marketing data exists. Every input below is an assumption; outputs are scenario estimates (D-015).</p>
+      <PresetSwitch manifest={manifest} value={preset} onChange={setPreset} label="Campaign assumptions" />
+      <Assumptions values={values} labels={CAMPAIGN_LABELS} />
+      <AsyncSection state={state}>{(data) => <CampaignResult data={data} />}</AsyncSection>
+    </Card>
+  );
+}
+
+function StaticSimulator({ period }: { period: Period }) {
+  const manifest = useApi(() => api.manifest(), "manifest");
+  return (
+    <>
+      <p className="note">
+        Demo: pick one of three preset assumption sets, each pre-calculated with the real simulator. To enter your own numbers, run MERIDIAN
+        locally (<a href="https://github.com/maayank05/meridian#setup-windows-powershell-linuxmacos-use-venvbin-instead-of-venvscripts">setup guide</a>).
+      </p>
+      <AsyncSection state={manifest}>
+        {(m) => (
+          <>
+            <StaticScenario period={period} manifest={m} />
+            <StaticCampaign manifest={m} />
+          </>
+        )}
+      </AsyncSection>
+    </>
   );
 }
 
@@ -180,8 +268,14 @@ export function SimulatorPage({ period }: { period: Period }) {
     <div className="page">
       <h1>Decision simulator</h1>
       <p className="lede">Hypothetical “what-if” estimates. ROI uses your assumed contribution margin, never revenue. Nothing here is an observed result.</p>
-      <ScenarioForm period={period} />
-      <CampaignForm />
+      {STATIC_SNAPSHOT ? (
+        <StaticSimulator period={period} />
+      ) : (
+        <>
+          <ScenarioForm period={period} />
+          <CampaignForm />
+        </>
+      )}
     </div>
   );
 }

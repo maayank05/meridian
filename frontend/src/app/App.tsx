@@ -1,5 +1,5 @@
 import { NavLink, Navigate, Route, Routes, useSearchParams } from "react-router-dom";
-import { api, type Period } from "../services/api";
+import { api, STATIC_SNAPSHOT, type Period } from "../services/api";
 import { useApi } from "../features/useApi";
 import type { Metadata } from "../types/api";
 import { OverviewPage } from "../pages/OverviewPage";
@@ -86,6 +86,13 @@ export function App() {
         <p className="sidebar-foot">
           Data: Olist public dataset (CC BY-NC-SA 4.0). Values in BRL.
           {metadata?.data_freshness_utc && <><br />Loaded {metadata.data_freshness_utc.slice(0, 16).replace("T", " ")} UTC</>}
+          {STATIC_SNAPSHOT && (
+            <>
+              <br />
+              <br />
+              Live demo: a static snapshot of the local API. <a href="https://github.com/maayank05/meridian">Source on GitHub</a>
+            </>
+          )}
         </p>
       </aside>
       <div className="main">

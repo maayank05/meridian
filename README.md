@@ -90,7 +90,7 @@ See [powerbi/README.md](powerbi/README.md): model specification, DAX for the can
 - Revenue proxy only; no cost, refund, marketing or inventory data. Simulator results depend entirely on user-entered assumptions.
 - The forecast model does not beat the naive baseline; the naive baseline is used and the report says so.
 - Usable history is 20 months (2017-01 to 2018-08). Timestamps are inferred São Paulo local time.
-- Local execution only (no hosting). Period filters are whole months. The customers endpoint takes about 1.8 s on the full data.
+- The full stack runs locally; the public demo is a static snapshot with three simulator presets (D-024). Period filters are whole months. The customers endpoint takes about 1.8 s on the full data.
 - Full list: [docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md).
 
 ## Licence

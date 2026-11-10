@@ -38,3 +38,15 @@ Last updated: 2026-10-31. **Status: skeleton.** Nothing is deployed. No URL, pro
 - Rollback procedure.
 - Power BI connectivity notes.
 - Expected monthly cost.
+
+## 5. Hosted demo: static snapshot on Vercel (D-024, 2026-11-11)
+The API and database are not hosted. The public demo is the React app reading a pre-exported snapshot.
+
+**Refresh the snapshot** (needs the loaded `meridian_dev` and `.env`; about 25 to 35 minutes):
+```powershell
+.venv\Scripts\python scripts/export_static_snapshot.py      # writes frontend/public/snapshot/
+cd frontend; npm run build:static; npm run preview -- --mode static   # check it locally
+```
+Commit `frontend/public/snapshot/` and push; Vercel rebuilds on push to `main`.
+
+**Vercel project (one-time, by the owner):** import `maayank05/meridian`, set **Root Directory** to `frontend`. `frontend/vercel.json` sets the install and build commands, the `dist` output and the single-page-app rewrite (snapshot files are excluded from it, so a missing period returns 404 instead of the app shell). No environment variables are needed.

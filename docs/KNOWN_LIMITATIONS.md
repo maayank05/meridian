@@ -65,8 +65,13 @@ Last updated: 2026-10-31 (Phase 0). Items marked *(expected)* come from public d
 
 ## Milestone D limitations
 - L-D01 No Power BI `.pbix` is included; it must be built in Power BI Desktop from the specification.
-- L-D02 No hosted deployment (Render and managed MySQL deferred: no paid services). Local execution only.
+- L-D02 No hosted API or database (Render and managed MySQL deferred: no paid services). The public demo is a static snapshot instead (D-024, L-H01 to L-H03).
 - L-D03 Playwright E2E runs locally only (needs the licensed dataset); CI covers everything else.
+
+## Hosted demo limitations (D-024)
+- L-H01 The public demo is a static snapshot: it shows exactly what the local API returned at export time and does not query a database.
+- L-H02 The Decision Simulator offers three synthetic presets only; custom assumptions need the local stack.
+- L-H03 The snapshot must be re-exported and committed after any change to the analytics, the load or the presets.
 
 ## Phase 2 tooling notes
 - Profiling ran in a throwaway scratch environment (Python 3.13.2, pandas 3.1.0, numpy 2.5.4). These versions installed and ran correctly; this is early evidence for D-002/D-003 compatibility, not the locked project environment (Phase 3).

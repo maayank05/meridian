@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AsyncSection, ProvenanceBadge } from "../components/ui";
-import { ApiError, api } from "../services/api";
+import { ApiError, api, staticPath } from "../services/api";
 import { formatChange, formatPct, formatValue } from "../lib/format";
 import { OverviewPage } from "../pages/OverviewPage";
 import { App } from "../app/App";
@@ -62,6 +62,11 @@ describe("api client", () => {
       new Response(JSON.stringify({ error: { code: "invalid_input", message: "start must not be after end", request_id: "r1" } }), { status: 422 }),
     );
     await expect(api.overview({ start: "2018-01", end: "2017-01" })).rejects.toMatchObject({ status: 422, message: "start must not be after end", requestId: "r1" });
+  });
+
+  it("maps API paths to static snapshot files", () => {
+    expect(staticPath("/overview?start_month=2017-01&end_month=2018-08")).toBe("/snapshot/overview/2017-01_2018-08.json");
+    expect(staticPath("/metadata")).toBe("/snapshot/metadata.json");
   });
 
   it("reports an unreachable backend", async () => {
